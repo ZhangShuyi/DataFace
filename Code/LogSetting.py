@@ -7,7 +7,7 @@
 import logging
 import logging.config
 
-logging.config.fileConfig("Log.config")
+logging.config.fileConfig("../Log/Log.config")
 LOGGER_ROOT = logging.getLogger("root")
 LOGGER_PRINT = logging.getLogger("print")
 LOGGER_RECORD = logging.getLogger("record")

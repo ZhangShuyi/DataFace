@@ -4,3 +4,23 @@
 2017-11-02 15: 22: 08 LogSetting.py INFO  Start LOG_RECORD module
 2017-11-02 15: 23: 10 LogSetting.py INFO  Start LOG_ROOT module
 2017-11-02 15: 23: 10 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 08: 43 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 16: 08: 43 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 20: 38 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 16: 20: 38 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 21: 15 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 16: 21: 15 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 21: 15 FetchInternetPicture.py INFO  Generate file ../DataFromInternet
+2017-11-02 16: 21: 15 FetchInternetPicture.py INFO  Start Fetch the picture from Internet         (According to ModelAndTxt/FacesToBeFetched.txt start line 0) save at ../DataFromInternet
+2017-11-02 16: 21: 15 FetchInternetPicture.py ERROR  Not found File ModelAndTxt/FacesToBeFetched.txt, the process was finished
+2017-11-02 16: 21: 15 FetchInternetPicture.py INFO  End Fetch the picture from Internet         (According to ModelAndTxt/FacesToBeFetched.txt, success) save at 0 
+2017-11-02 16: 22: 54 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 16: 22: 54 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 22: 54 FetchPicture.py INFO  Generate file ../../DataFromInternet
+2017-11-02 16: 22: 54 FetchPicture.py INFO  Start Fetch the picture from Internet         (According to ../ModelAndTxt/FacesToBeFetched.txt start line 0) save at ../../DataFromInternet
+2017-11-02 16: 22: 54 FetchPicture.py INFO  End Fetch the picture from Internet         (According to ../ModelAndTxt/FacesToBeFetched.txt, success) save at 0 
+2017-11-02 16: 24: 48 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 16: 24: 48 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 16: 24: 48 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         (According to ../ModelAndTxt/FacesToBeFetched.txt start line 0) save at ../../DataFromInternet
+2017-11-02 16: 24: 49 FetchPicture.py INFO  Generate file ../../DataFromInternet\AbhishekBachan
