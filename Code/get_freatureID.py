@@ -1,8 +1,8 @@
 import os
 import cv2
-import Read_API
-import CNN_net
-import feature_data
+import Code.Read_API as Read_API
+import Code.CNN_net as CNN_net
+import Code.feature_data as feature_data
 import numpy
 import shutil
 import json
@@ -62,6 +62,6 @@ if __name__ == "__main__":
     ''',
 
     for i, model_name in enumerate(os.listdir(os.path.join(PATH, os.listdir(PATH)[0]))):
-        if i < 58 :
+        if i < 58:
             continue
         write_part_ID(PATH, model_name, os.path.join(WRITE_PATH, model_name + ".json"))
