@@ -1,11 +1,13 @@
+import json
 import os
-import cv2
-import Code.Read_API as Read_API
+import shutil
+
 import Code.CNN_net as CNN_net
 import Code.feature_data as feature_data
+import cv2
 import numpy
-import shutil
-import json
+
+import InternalModule.ReadPicAPI as Read_API
 
 PIC_PATH = "data3\datas_face_test\AbhishekBachan\P00100019.jpg"
 

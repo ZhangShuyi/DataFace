@@ -24,3 +24,31 @@
 2017-11-02 16: 24: 48 FetchPicture.py INFO  Start Fetch the picture from Internet 
          (According to ../ModelAndTxt/FacesToBeFetched.txt start line 0) save at ../../DataFromInternet
 2017-11-02 16: 24: 49 FetchPicture.py INFO  Generate file ../../DataFromInternet\AbhishekBachan
+2017-11-02 18: 46: 08 LogSetting.py INFO  Start LOG_ROOT module
+2017-11-02 18: 46: 08 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 19:44:09,753 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 19:44:09,753 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 19:58:53,485 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 19:58:53,485 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:01:12,640 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:01:12,640 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:01:15,071 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         (According to ../ModelAndTxt/FacesToBeFetched.txt start line 0) save at ../../DataFromInternet
+2017-11-02 20:01:15,071 FetchPicture.py ERROR  Not found File ../ModelAndTxt/FacesToBeFetched.txt, the process was finished
+2017-11-02 20:05:05,582 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:05:05,583 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:05:05,866 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         	 According to ../ModelAndTxt/FacesToBeFetched.txt start line 0 save at ../../DataFromInternet
+2017-11-02 20:05:05,867 FetchPicture.py ERROR  NotFoundFile ../ModelAndTxt/FacesToBeFetched.txt, the process was finished
+2017-11-02 20:05:41,144 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:05:41,144 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:05:41,396 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         	 According to ModelAndTxt/FacesToBeFetched.txt start line 0 save at ../DataFromInternet
+2017-11-02 20:06:38,249 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:06:38,249 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:06:38,848 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         	 According to ModelAndTxt/FacesToBeFetched.txt start line 0 save at ../DataFromInternet
+2017-11-02 20:07:14,522 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:07:14,522 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:07:14,780 FetchPicture.py INFO  Start Fetch the picture from Internet 
+         	 According to ModelAndTxt/FacesToBeFetched.txt (start line 0) save at ../DataFromInternet
