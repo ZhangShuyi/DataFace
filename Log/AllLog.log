@@ -52,3 +52,19 @@
 2017-11-02 20:07:14,522 LogSetting.py INFO  Start LOG_RECORD module
 2017-11-02 20:07:14,780 FetchPicture.py INFO  Start Fetch the picture from Internet 
          	 According to ModelAndTxt/FacesToBeFetched.txt (start line 0) save at ../DataFromInternet
+2017-11-02 20:40:28,024 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:40:28,024 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:41:38,814 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:41:38,815 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:42:03,720 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:42:03,720 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 20:42:45,961 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 20:42:45,961 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 21:03:34,371 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 21:03:34,372 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 21:03:55,608 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 21:03:55,609 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 21:04:44,167 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 21:04:44,167 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-02 21:05:38,626 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-02 21:05:38,627 LogSetting.py INFO  Start LOG_RECORD module

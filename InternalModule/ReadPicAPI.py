@@ -1,8 +1,45 @@
-import cv2
+# -*- coding: utf-8 -*-
+"""
+    Version 1.0
+    _ReadPicAPI
+    Use for read Pic from data for input of CNN net
+"""
 import os
+import enum
+import cv2
 import numpy
-import matplotlib.pyplot as plt
-import json
+from InternalModule.LogSetting import ROOT_LOG, RECORD_LOG, PRINT_LOG
+
+
+class PARA(enum.Enum):
+    GRAY = 1
+    COLOR = 2
+    NO_NORM = 3
+    MAX_255INT = 4
+    MAX_32FLOAT = 5
+    MAX_64FLOAT = 6
+
+
+def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, show=False):
+    try:
+        if color == PARA.GRAY:
+            img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+            img = numpy.array(img)
+            img_h = img.shape[0]
+            img_w = img.shape[1]
+            img_c = 1
+        elif color == PARA.COLOR:
+            img = cv2.imread(path, cv2.IMREAD_COLOR)
+            img_h = img.shape[0]
+            img_w = img.shape[1]
+            img_c = img.shape[2]
+    except FileNotFoundError:
+        ROOT_LOG.error(" FileNotFoundError When Read image from {}".format(path))
+    if d_size is not 0:
+        img = cv2.resize(img, dsize=(d_size, d_size), interpolation=cv2.INTER_CUBIC)
+    img = img.reshape(d_size, d_size, img_c)
+    print(img.shape)
+    return img
 
 
 def scan_files(directory, prefix=None, postfix=None):
@@ -152,3 +189,7 @@ def load_random_data_with_batches(path, json_file):
             return picture_batches_with_json(os.path.join(path, pic), json_data=contents[pic], show=False)
         else:
             continue
+
+
+if __name__ == "__main__":
+    ReadPicture("D:\DataFromInternet\AbhishekBachan\\0001.jpg", d_size=10, color=PARA.GRAY)
