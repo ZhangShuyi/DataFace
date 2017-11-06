@@ -68,3 +68,17 @@
 2017-11-02 21:04:44,167 LogSetting.py INFO  Start LOG_RECORD module
 2017-11-02 21:05:38,626 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
 2017-11-02 21:05:38,627 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:54:24,164 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:54:24,172 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:55:07,134 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:55:07,134 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:55:53,795 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:55:53,795 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:57:20,674 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:57:20,674 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:57:46,857 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:57:46,872 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:59:35,017 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:59:35,017 LogSetting.py INFO  Start LOG_RECORD module
+2017-11-03 09:59:56,313 LogSetting.py INFO  Start LOG_ROOT module (configuration D:\DataFace\InternalModule/../Log\Log.config)
+2017-11-03 09:59:56,313 LogSetting.py INFO  Start LOG_RECORD module

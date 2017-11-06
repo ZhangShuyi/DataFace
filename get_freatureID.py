@@ -7,7 +7,7 @@ import Code.feature_data as feature_data
 import cv2
 import numpy
 
-import InternalModule.ReadPicAPI as Read_API
+import InternalModule.FilePicAPI as Read_API
 
 PIC_PATH = "data3\datas_face_test\AbhishekBachan\P00100019.jpg"
 

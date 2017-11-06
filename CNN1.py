@@ -1,30 +1,16 @@
 import os
 import cv2
 import numpy
-import Read_API
+import InternalModule.Header as Hd
 import tensorflow as tf
 import pandas as pd
 
-train_path = "D:/data1/data3/datas_face_train_feature"
-test_path = "D:/data1/data3/datas_face_test_feature"
-write_path = "D:/data1/data3/writer"
-model_path = "D:/data1/data3/model"
+TR_PATH = "D:/data1/data3/datas_face_train_feature"
+TS_PATH = "D:/data1/data3/datas_face_test_feature"
+WR_PATH = "D:/data1/data3/writer"
+MD_PATH = "D:/data1/data3/model"
 TRAIN_CSV = ""
 TEST_CSV = ""
-
-
-def load_data(input_path):
-    file_list = os.listdir(input_path)
-    images = []
-    for i, d in enumerate(file_list):
-        try:
-            img = cv2.imread(os.path.join(input_path, d))
-            img = numpy.array(img, dtype=numpy.float32)
-            cv2.normalize(img, img)
-            images.append(img)
-        except:
-            print("Can not open%s" % os.path.join(input_path, d))
-    return images
 
 
 class CNN1(object):
@@ -34,61 +20,70 @@ class CNN1(object):
 
     @staticmethod
     def add_convolution_layer(image, input_channel, filter_size, stddev, output_channel, strides, name,
-                              active_function=None):
+                              active_function=None, record=False):
         with tf.name_scope(name):
             weight = tf.get_variable(name + 'W', filter_size + [input_channel, output_channel],
                                      initializer=tf.truncated_normal_initializer(stddev=stddev))
-            # tf.summary.histogram(name + "\Filter", weight)
             basis = tf.get_variable(name + "B", output_channel, initializer=tf.constant_initializer(0.0))
-            # tf.summary.histogram(name + "\B", basis)
-            output = tf.nn.conv2d(image, weight, strides=strides, padding='SAME')
+            export = tf.nn.conv2d(image, weight, strides=strides, padding='SAME')
             if active_function:
-                ac_output = active_function(tf.nn.bias_add(output, basis))
+                ac_output = active_function(tf.nn.bias_add(export, basis))
             else:
-                ac_output = output
-            # tf.summary.histogram(name + "\output", ac_output)
+                ac_output = export
+            if record:
+                tf.summary.histogram(name + "\Filter", weight)
+                tf.summary.histogram(name + "\B", basis)
+                tf.summary.histogram(name + "\export", ac_output)
             return ac_output
 
     @staticmethod
-    def add_pooling_layer(image, ksize, strides, name):
+    def add_pooling_layer(image, ksize, strides, name, record=False):
         with tf.name_scope(name):
             pooling = tf.nn.max_pool(image, ksize, strides, padding='SAME')
-            return pooling
+            if record:
+                tf.summary.histogram(name + "\pooling", pooling)
+        return pooling
 
     @staticmethod
-    def add_full_connection_layer(input_tensor, in_dim, out_dim, stddev, name, active_function=None):
+    def add_full_connection_layer(input_tensor, in_dim, out_dim, stddev, name, active_function=None, record=False):
         with tf.name_scope(name):
             weight = tf.get_variable(name + "W", [in_dim, out_dim],
                                      initializer=tf.truncated_normal_initializer(stddev=stddev))
-            # tf.summary.histogram(name + "\W", weight)
             basis = tf.get_variable(name + "B", [out_dim], initializer=tf.constant_initializer(0.0))
-            # tf.summary.histogram(name + "\B", basis)
-            output = tf.add(tf.matmul(input_tensor, weight), basis)
-            # tf.summary.histogram(name + "\out", output)
+            export = tf.add(tf.matmul(input_tensor, weight), basis)
+            if record:
+                tf.summary.histogram(name + "\W", weight)
+                tf.summary.histogram(name + "\B", basis)
+                tf.summary.histogram(name + "\out", export)
             if active_function:
-                return active_function(output)
+                return active_function(export)
             else:
-                return output
+                return export
 
     @staticmethod
-    def add_normalization_layer(input_tensor, name):
+    def add_normalization_layer(input_tensor, name, record=False):
         with tf.name_scope(name):
-            # tf.summary.histogram("input", input_tensor)
-            output = tf.nn.l2_normalize(input_tensor, dim=1)
-            # tf.summary.histogram("output", output)
-        return output
+            export = tf.nn.l2_normalize(input_tensor, dim=1)
+            if record:
+                tf.summary.histogram("input", input_tensor)
+                tf.summary.histogram("output", export)
+        return export
 
-    def __init__(self, input_height, input_width, input_channel, label_size, model_name):
-        self.input_height = input_height
-        self.input_width = input_width
-        self.input_channel = input_channel
-        self.label_size = label_size
-        self.sess = tf.Session()
-        self.tag_size = len(os.listdir(train_path))
+    def __init__(self, input_size, label_size, model_name):
+        try:
+            self.input_height = input_size[0]
+            self.input_width = input_size[1]
+            self.input_channel = input_size[2]
+        except KeyError:
+            Hd.ROOT_LOG.error("Model {}'s input size is invalid".format(model_name))
+            return
         self.model_name = model_name
+        self.label_size = label_size
+        self.tag_size = len(os.listdir(TR_PATH))
+        self.sess = tf.Session()
 
     def __del__(self):
-        print("Info: model {} was deleted".format(self.model_name))
+        Hd.ROOT_LOG.info("Model {} is deleted".format(self.model_name))
 
     def load_data(self, train_path, test_path, layer_path=None):
         self.data_pt, self.data_lt = self.load_test_data(test_path, sample_size=100, layer_path=layer_path)
@@ -155,11 +150,11 @@ class CNN1(object):
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, dtype="float"))
         # tf.summary.scalar("AC", self.accuracy)
         self.merged = tf.summary.merge_all()
-        if not os.path.exists(write_path):
-            os.mkdir(write_path)
-        if not os.path.exists(os.path.join(write_path, self.model_name)):
-            os.mkdir(os.path.join(write_path, self.model_name))
-        self.writer = tf.summary.FileWriter(os.path.join(write_path, self.model_name), self.sess.graph)
+        if not os.path.exists(WR_PATH):
+            os.mkdir(WR_PATH)
+        if not os.path.exists(os.path.join(WR_PATH, self.model_name)):
+            os.mkdir(os.path.join(WR_PATH, self.model_name))
+        self.writer = tf.summary.FileWriter(os.path.join(WR_PATH, self.model_name), self.sess.graph)
         self.saver = tf.train.Saver()
 
     def initial_para(self):
@@ -167,14 +162,14 @@ class CNN1(object):
         self.sess.run(init)
 
     def save_para(self):
-        if not os.path.exists(os.path.join(model_path, self.model_name)):
-            os.mkdir(os.path.join(model_path, self.model_name))
-        save_path = self.saver.save(self.sess, os.path.join(model_path, self.model_name, self.model_name))
+        if not os.path.exists(os.path.join(MD_PATH, self.model_name)):
+            os.mkdir(os.path.join(MD_PATH, self.model_name))
+        save_path = self.saver.save(self.sess, os.path.join(MD_PATH, self.model_name, self.model_name))
         print("Info: save model at {}".format(save_path))
 
     def restore_para(self):
-        self.saver.restore(self.sess, os.path.join(model_path, self.model_name, self.model_name))
-        print("Info: restore model from {}".format(os.path.join(model_path, self.model_name, self.model_name)))
+        self.saver.restore(self.sess, os.path.join(MD_PATH, self.model_name, self.model_name))
+        print("Info: restore model from {}".format(os.path.join(MD_PATH, self.model_name, self.model_name)))
 
     def get_variable(self, variable, feed_dict):
         return self.sess.run(variable, feed_dict=feed_dict)
@@ -215,13 +210,15 @@ class CNN1(object):
             for i, people_name in enumerate(os.listdir(path)):
                 tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
                 tag[i] = 1.0
-                data_t += Read_API.load_all_pictures_in_file(os.path.join(path, people_name), dst_size=32, tag=tag)
+                data_t += Hd.load_all_pictures_in_file(os.path.join(path, people_name), dst_size=32,
+                                                                   tag=tag)
         else:
             for i, people_name in enumerate(os.listdir(path)):
                 tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
                 tag[i] = 1.0
-                data_t += Read_API.load_all_pictures_in_file(os.path.join(path, people_name, layer_path), dst_size=32,
-                                                             tag=tag)
+                data_t += Hd.load_all_pictures_in_file(os.path.join(path, people_name, layer_path),
+                                                                   dst_size=32,
+                                                                   tag=tag)
         numpy.random.shuffle(data_t)
         data_t = data_t
         data_p = [p[0] for p in data_t]
@@ -273,8 +270,8 @@ class CNN1(object):
 
 
 if __name__ == "__main__":
-    namelist = os.listdir(train_path)
-    model_list = os.listdir(os.path.join(train_path, os.listdir(train_path)[0]))
+    namelist = os.listdir(TR_PATH)
+    model_list = os.listdir(os.path.join(TR_PATH, os.listdir(TR_PATH)[0]))
     print("Info: model_amount {}".format(len(model_list)))
     for i, model_name in enumerate(model_list):
         if i < 74:
@@ -282,7 +279,7 @@ if __name__ == "__main__":
         C1 = CNN1(input_height=32, input_width=32, label_size=59, input_channel=1, model_name=model_name)
         C1.build_model(False)
         C1.initial_para()
-        C1.load_data(train_path, test_path, layer_path=model_name)
+        C1.load_data(TR_PATH, TS_PATH, layer_path=model_name)
         AC = C1.train(batchsize=50, step=5000)
         output = open("data3/result.txt", 'a')
         output.write("model {}: ac {} \n".format(model_name, AC))

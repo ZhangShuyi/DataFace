@@ -8,6 +8,9 @@ import os
 import enum
 import cv2
 import numpy
+import json
+import matplotlib as plt
+import pandas
 from InternalModule.LogSetting import ROOT_LOG, RECORD_LOG, PRINT_LOG
 
 
@@ -17,10 +20,9 @@ class PARA(enum.Enum):
     NO_NORM = 3
     MAX_255INT = 4
     MAX_32FLOAT = 5
-    MAX_64FLOAT = 6
 
 
-def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, show=False):
+def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, show=False, success_log=False):
     try:
         if color == PARA.GRAY:
             img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
@@ -36,13 +38,44 @@ def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, sho
     except FileNotFoundError:
         ROOT_LOG.error(" FileNotFoundError When Read image from {}".format(path))
     if d_size is not 0:
-        img = cv2.resize(img, dsize=(d_size, d_size), interpolation=cv2.INTER_CUBIC)
-    img = img.reshape(d_size, d_size, img_c)
-    print(img.shape)
+        img_w = d_size
+        img_h = d_size
+    img = cv2.resize(img, dsize=(img_h, img_w), interpolation=cv2.INTER_CUBIC)
+    img = numpy.array(img)
+    img = img.reshape(img_h, img_w, img_c)
+    if normalization == PARA.NO_NORM:
+        img = img
+    elif normalization == PARA.MAX_255INT:
+        img = img.astype(numpy.int32)
+        cv2.normalize(img, img, alpha=255, beta=0, norm_type=cv2.NORM_MINMAXM)
+    elif normalization == PARA.MAX_32FLOAT:
+        img = img.astype(numpy.float32)
+        cv2.normalize(img, img, alpha=1.0, beta=0.0, norm_type=cv2.NORM_MINMAX)
+    if show:
+        cv2.imshow("pic", img)
+        cv2.waitKey()
+    if success_log:
+        ROOT_LOG.info("Read image from {} success".format(path))
     return img
 
 
-def scan_files(directory, prefix=None, postfix=None):
+def WritePicture(img, save_path, color=PARA.GRAY, show=False, success_log=False):
+    try:
+        if color == PARA.GRAY:
+            cv2.imwrite(save_path, img, params=cv2.IMREAD_GRAYSCALE)
+        elif color == PARA.COLOR:
+            cv2.imwrite(save_path, img, params=cv2.IMREAD_COLOR)
+    except FileNotFoundError:
+        ROOT_LOG.error("FileNotFoundError When Write image from {}".format(save_path))
+    if show:
+        cv2.imshow("pic", img)
+        cv2.waitKey()
+    if success_log:
+        ROOT_LOG.info("Write image from {} success".format(save_path))
+    return
+
+
+def ScanFile(directory, prefix=None, postfix=None):
     files_list = []
     for root, sub_dirs, files in os.walk(directory):
         for special_file in files:
@@ -57,48 +90,18 @@ def scan_files(directory, prefix=None, postfix=None):
     return files_list
 
 
-def load_all_pictures_in_file(path, tag=None, dst_size=None):
+def LoadFilePicInMemoryWithTag(path, d_size, tag=None, postfix='jpg', color=PARA.GRAY, normalization=PARA.NO_NORM):
     data = []
-    dir_name_list = scan_files(path)
+    dir_name_list = ScanFile(path, postfix=postfix)
     for dir_name in dir_name_list:
         data_line = []
-        try:
-            img = cv2.imread(dir_name)
-            img = numpy.array(img[:, :, :1], dtype=numpy.float32)
-            if dst_size:
-                img2 = cv2.resize(img, dsize=(dst_size, dst_size), interpolation=cv2.INTER_AREA).reshape(dst_size,
-                                                                                                         dst_size, 1)
-            cv2.normalize(img2, img2, alpha=1, beta=0, norm_type=cv2.NORM_INF)
-            data_line.append(img2)
-            data_line.append(tag)
-        except FileNotFoundError:
-            print("File Not Found Error")
-        except TypeError:
-            # print("Type Error{}".format(dir_name))
-            continue
+        pic_path = os.path.join(path, dir_name)
+        img = ReadPicture(pic_path, d_size=d_size, color=color, normalization=normalization)
+        data_line.append(img)
+        data_line.append(tag)
         data.append(data_line)
+    ROOT_LOG.info("File {} image reading was success".format(path))
     return data
-
-
-def feature_map_with_json(path, json_data, ksize=10, show=False):
-    img = cv2.imread(path)
-    img = numpy.array(img, dtype=numpy.float32)
-    cv2.normalize(img, img, alpha=1, beta=0, norm_type=cv2.NORM_INF)
-    feature_map = []
-    for i in range(68):
-        i_s = "%d" % i
-        left = max(0, json_data[i_s][0] - ksize)
-        right = min(63, json_data[i_s][0] + ksize)
-        top = max(0, json_data[i_s][1] - ksize)
-        bottom = min(63, json_data[i_s][1] + ksize)
-        feature_map.append(img[left:right, top:bottom, :])
-        if show:
-            plt.subplot(7, 10, i + 1)
-            plt.axis('off')
-            plt.imshow(feature_map[i])
-    if show:
-        plt.show()
-    return feature_map
 
 
 def load_all_batches_in_file_with_json(path, json_file):
@@ -171,25 +174,6 @@ def picture_batches_with_json(path, json_data, show=False):
     return batches
 
 
-def load_all_batches_in_file(path, json_file):
-    with open(json_file, 'r')as file_object:
-        contents = json.load(file_object)
-    data = []
-    for pic in os.listdir(path):
-        if pic.endswith('jpg'):
-            data.append(picture_batches_with_json(os.path.join(path, pic), json_data=contents[pic], show=False))
-    return data
-
-
-def load_random_data_with_batches(path, json_file):
-    with open(os.path.join(path, json_file), 'r')as file_object:
-        contents = json.load(file_object)
-    for pic in os.listdir(path):
-        if pic.endswith('jpg'):
-            return picture_batches_with_json(os.path.join(path, pic), json_data=contents[pic], show=False)
-        else:
-            continue
-
-
 if __name__ == "__main__":
-    ReadPicture("D:\DataFromInternet\AbhishekBachan\\0001.jpg", d_size=10, color=PARA.GRAY)
+    ReadPicture("D:\DataFromInternet\AbhishekBachan\\0001.jpg", d_size=10, normalization=PARA.MAX_32FLOAT,
+                color=PARA.GRAY)

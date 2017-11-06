@@ -2,7 +2,9 @@ import os
 import dlib
 import json
 import cv2
-import Read_API
+import matplotlib as plt
+import InternalModule.FilePicAPI
+from InternalModule.LogSetting *
 
 PATH = "D:\\data1\\data3\\datas_face_train"
 JSON_PATH = "D:\\data1\\data3\\datas_face_train_json"
@@ -12,25 +14,25 @@ T_PATH = "D:\\data1\\data3\\datas_face_test"
 T_JSON_PATH = "D:\\data1\\data3\\datas_face_test_json"
 T_FEATURE_PATH = "D:\\data1\\data3\\datas_face_test_feature"
 
-predictor_path = 'D:\\face project\\dlib_face\\shape_predictor_68_face_landmarks.dat'
+LD_MODEL_PATH = '../ModelAndTxt/shape_predictor_68_face_landmarks.dat'
 face_rec_model_path = 'D:\\face project\\dlib_face\\dlib_face_recognition_resnet_model_v1.dat'
 detector = dlib.get_frontal_face_detector()
-sp = dlib.shape_predictor(predictor_path)
+sp = dlib.shape_predictor(LD_MODEL_PATH)
+LANDMARK_SIZE = 68
 
 feature_map = {}
 
 
-def feature_one_picture(path):
+def GetPicLandmark(img, img_name):
     picture_diction = {}
-    img = cv2.imread(path)
-    rect = dlib.rectangle(0, 0, 64, 64)
+    rect = dlib.rectangle(0, 0, img.shape[0], img.shape[1])
     try:
         shape = sp(img, rect)
-    except:
-        print("No face!")
-        return
-    for i in range(68):
-        picture_diction["%d" % i] = [shape.part(i).x, shape.part(i).y]
+        for i in range(LANDMARK_SIZE):
+            picture_diction["%d" % i] = [shape.part(i).x, shape.part(i).y]
+    except KeyError:
+        ROOT_LOG.warning("Img {} have no face!".format(img_name))
+        return None
     return picture_diction
 
 
@@ -38,7 +40,7 @@ def create_people_json(people_name, pictures_path, write_path):
     people_diction = {}
     picture_list = os.listdir(pictures_path)
     for picture in picture_list:
-        people_diction[picture] = feature_one_picture(os.path.join(pictures_path, picture))
+        people_diction[picture] = GetPicLandmark(os.path.join(pictures_path, picture))
     json_path = os.path.join(write_path, people_name + ".json")
     with open(json_path, 'w') as file_object:
         json.dump(people_diction, file_object)
@@ -66,6 +68,27 @@ def generate_batches(path, json_path, write_path):
                     print("exist None: people_index {} feature_index {}, picture_index {}".format(people_index,
                                                                                                   feature_index,
                                                                                                   picture_index))
+
+
+def ExtractFeatureWithJson(img, json_data, feature_size=10, show=False):
+    h_min = 0
+    w_min = 0
+    h_max = img.shape[0]
+    w_max = img.shape[1]
+    feature_map = []
+    for i, feature_index in enumerate(json_data):
+        left = max(w_min, json_data[feature_index][1] - feature_size)
+        right = min(w_max, json_data[feature_index][1] + feature_size)
+        top = max(h_min, json_data[feature_index][0] - feature_size)
+        bottom = min(h_max, json_data[feature_index][0] + feature_size)
+        feature_map.append(img[top:bottom, left:right, :])
+        if show:
+            plt.subplot(7, 10, i + 1)
+            plt.axis('off')
+            plt.imshow(feature_map[i])
+    if show:
+        plt.show()
+    return feature_map
 
 
 if __name__ == "__main__":

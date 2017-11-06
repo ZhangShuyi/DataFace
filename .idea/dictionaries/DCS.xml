@@ -3,6 +3,7 @@
     <words>
       <w>asctime</w>
       <w>levelname</w>
+      <w>lrelu</w>
       <w>readapi</w>
     </words>
   </dictionary>
