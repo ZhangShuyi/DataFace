@@ -4,3 +4,4 @@ import os
 import numpy
 from InternalModule.LogSetting import *
 from InternalModule.FilePicAPI import *
+from InternalModule.SepBatch import *

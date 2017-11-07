@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="99122b78-27f7-44b4-adc8-a64d6201b67e" name="Default" comment="Log v1.1 repair some problem about path">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/BRGtoGray.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/view_ test.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/DCS.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/DCS.xml" />
+    <list default="true" id="99122b78-27f7-44b4-adc8-a64d6201b67e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InternalModule/FilePicAPI.py" afterPath="$PROJECT_DIR$/InternalModule/FilePicAPI.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InternalModule/Header.py" afterPath="$PROJECT_DIR$/InternalModule/Header.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InternalModule/SepBatch.py" afterPath="$PROJECT_DIR$/InternalModule/SepBatch.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Log/AllLog.log" afterPath="$PROJECT_DIR$/Log/AllLog.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/get_freatureID.py" afterPath="$PROJECT_DIR$/get_freatureID.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/CNN_net.py" afterPath="$PROJECT_DIR$/CNN1.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/InternalModule/ReadPicAPI.py" afterPath="$PROJECT_DIR$/InternalModule/FilePicAPI.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/feature_data.py" afterPath="$PROJECT_DIR$/InternalModule/SepBatch.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/filter.py" afterPath="$PROJECT_DIR$/DetectFace.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,8 +18,9 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DataFace$FetchInternetPicture.coverage" NAME="FetchInternetPicture Coverage Results" MODIFIED="1509611085356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Code" />
     <SUITE FILE_PATH="coverage/DataFace$LogSetting__1_.coverage" NAME="LogSetting (1) Coverage Results" MODIFIED="1509610137518" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Code" />
+    <SUITE FILE_PATH="coverage/DataFace$SepBatch.coverage" NAME="SepBatch Coverage Results" MODIFIED="1510022931796" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/InternalModule" />
     <SUITE FILE_PATH="coverage/DataFace$FetchPicture.coverage" NAME="FetchPicture Coverage Results" MODIFIED="1509624434362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/DataFace$ReadPicAPI.coverage" NAME="ReadPicAPI Coverage Results" MODIFIED="1509674395297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/InternalModule" />
+    <SUITE FILE_PATH="coverage/DataFace$ReadPicAPI.coverage" NAME="ReadPicAPI Coverage Results" MODIFIED="1509957147218" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/InternalModule" />
     <SUITE FILE_PATH="coverage/DataFace$LogSetting.coverage" NAME="LogSetting Coverage Results" MODIFIED="1509619552150" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Log" />
     <SUITE FILE_PATH="coverage/DataFace$LogSetting__2_.coverage" NAME="LogSetting (2) Coverage Results" MODIFIED="1509623933313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/InternalModule" />
   </component>
@@ -54,13 +49,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilePicAPI.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FilePicAPI.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/InternalModule/FilePicAPI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-973">
-              <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+            <state relative-caret-position="129">
+              <caret line="25" column="24" lean-forward="false" selection-start-line="25" selection-start-column="19" selection-end-line="25" selection-end-column="24" />
               <folding>
-                <element signature="e#116#125#0" expanded="true" />
+                <element signature="e#171#180#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -122,13 +117,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SepBatch.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SepBatch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/InternalModule/SepBatch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="32" column="20" lean-forward="true" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
+            <state relative-caret-position="414">
+              <caret line="163" column="29" lean-forward="true" selection-start-line="163" selection-start-column="29" selection-end-line="163" selection-end-column="29" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#110#123#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -147,8 +142,8 @@
       <file leaf-file-name="Header.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/InternalModule/Header.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="39" lean-forward="false" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
+            <state relative-caret-position="114">
+              <caret line="6" column="37" lean-forward="false" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -186,10 +181,10 @@
         <option value="$PROJECT_DIR$/InternalModule/LogSetting.py" />
         <option value="$PROJECT_DIR$/FetchPicture.py" />
         <option value="$PROJECT_DIR$/InternalModule/ReadPicAPI.py" />
-        <option value="$PROJECT_DIR$/InternalModule/Header.py" />
         <option value="$PROJECT_DIR$/CNN_net.py" />
         <option value="$PROJECT_DIR$/CNN1.py" />
         <option value="$PROJECT_DIR$/DetectFace.py" />
+        <option value="$PROJECT_DIR$/InternalModule/Header.py" />
         <option value="$PROJECT_DIR$/InternalModule/FilePicAPI.py" />
         <option value="$PROJECT_DIR$/InternalModule/SepBatch.py" />
       </list>
@@ -201,7 +196,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-60" />
     <option name="y" value="128" />
     <option name="width" value="1400" />
@@ -273,25 +268,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ReadPicAPI">
-    <configuration name="FetchInternetPicture" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Code" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="DataFace" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="D:\DataFace\FetchPicture.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
+  <component name="RunManager" selected="Python.SepBatch">
     <configuration name="FetchPicture" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -364,20 +341,38 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
+    <configuration name="SepBatch" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/InternalModule" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DataFace" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/InternalModule/SepBatch.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.LogSetting" />
-      <item index="1" class="java.lang.String" itemvalue="Python.FetchInternetPicture" />
-      <item index="2" class="java.lang.String" itemvalue="Python.LogSetting (2)" />
-      <item index="3" class="java.lang.String" itemvalue="Python.FetchPicture" />
-      <item index="4" class="java.lang.String" itemvalue="Python.ReadPicAPI" />
+      <item index="1" class="java.lang.String" itemvalue="Python.LogSetting (2)" />
+      <item index="2" class="java.lang.String" itemvalue="Python.FetchPicture" />
+      <item index="3" class="java.lang.String" itemvalue="Python.ReadPicAPI" />
+      <item index="4" class="java.lang.String" itemvalue="Python.SepBatch" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.ReadPicAPI" />
-        <item index="1" class="java.lang.String" itemvalue="Python.FetchPicture" />
-        <item index="2" class="java.lang.String" itemvalue="Python.LogSetting (2)" />
-        <item index="3" class="java.lang.String" itemvalue="Python.LogSetting" />
-        <item index="4" class="java.lang.String" itemvalue="Python.FetchInternetPicture" />
+        <item index="0" class="java.lang.String" itemvalue="Python.SepBatch" />
+        <item index="1" class="java.lang.String" itemvalue="Python.ReadPicAPI" />
+        <item index="2" class="java.lang.String" itemvalue="Python.FetchPicture" />
+        <item index="3" class="java.lang.String" itemvalue="Python.LogSetting (2)" />
+        <item index="4" class="java.lang.String" itemvalue="Python.LogSetting" />
       </list>
     </recent_temporary>
   </component>
@@ -434,7 +429,14 @@
       <option name="project" value="LOCAL" />
       <updated>1509624508691</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Log v1.1 repair some problem about path">
+      <created>1509935683844</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1509935683844</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -447,17 +449,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.3297062" sideWeight="0.4978678" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.5234541" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.47654584" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5634328" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.48827294" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.52771854" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.47228146" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.48720682" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5506396" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.48187634" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13646056" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.48720682" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.46801707" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -531,7 +533,8 @@
     <MESSAGE value="Finish FetchPicture Function v1.0" />
     <MESSAGE value="repair some problem in log function" />
     <MESSAGE value="Log v1.1 repair some problem about path" />
-    <option name="LAST_COMMIT_MESSAGE" value="Log v1.1 repair some problem about path" />
+    <MESSAGE value="SepBatch v1.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="SepBatch v1.0" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -597,7 +600,7 @@
         <state relative-caret-position="152">
           <caret line="8" column="10" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="10" />
           <folding>
-            <element signature="e#116#125#0" expanded="true" />
+            <element signature="e#171#180#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -623,7 +626,7 @@
         <state relative-caret-position="2508">
           <caret line="136" column="14" lean-forward="false" selection-start-line="136" selection-start-column="14" selection-end-line="136" selection-end-column="14" />
           <folding>
-            <element signature="e#116#125#0" expanded="true" />
+            <element signature="e#171#180#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -649,6 +652,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -690,7 +694,7 @@
         <state relative-caret-position="2508">
           <caret line="136" column="14" lean-forward="false" selection-start-line="136" selection-start-column="14" selection-end-line="136" selection-end-column="14" />
           <folding>
-            <element signature="e#116#125#0" expanded="true" />
+            <element signature="e#171#180#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -764,6 +768,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="30" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -774,38 +779,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InternalModule/Header.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="39" lean-forward="false" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/BRGtoGray.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CNN1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="288" column="0" lean-forward="true" selection-start-line="288" selection-start-column="0" selection-end-line="288" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DetectFace.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -846,10 +823,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/CNN1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="288" column="0" lean-forward="true" selection-start-line="288" selection-start-column="0" selection-end-line="288" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/FetchPicture.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
           <caret line="65" column="43" lean-forward="false" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DetectFace.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -864,22 +859,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InternalModule/SepBatch.py">
+    <entry file="file://$PROJECT_DIR$/InternalModule/FilePicAPI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="32" column="20" lean-forward="true" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
+        <state relative-caret-position="129">
+          <caret line="25" column="24" lean-forward="false" selection-start-line="25" selection-start-column="19" selection-end-line="25" selection-end-column="24" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#171#180#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InternalModule/FilePicAPI.py">
+    <entry file="file://$PROJECT_DIR$/InternalModule/Header.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-973">
-          <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+        <state relative-caret-position="114">
+          <caret line="6" column="37" lean-forward="false" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
           <folding>
-            <element signature="e#116#125#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/InternalModule/SepBatch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="163" column="29" lean-forward="true" selection-start-line="163" selection-start-column="29" selection-end-line="163" selection-end-column="29" />
+          <folding>
+            <element signature="e#110#123#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -3,14 +3,13 @@
     Version 1.0
     _ReadPicAPI
     Use for read Pic from data for input of CNN net
+    Version 1.1
+    fix some problem in Write function
 """
 import os
 import enum
 import cv2
 import numpy
-import json
-import matplotlib as plt
-import pandas
 from InternalModule.LogSetting import ROOT_LOG, RECORD_LOG, PRINT_LOG
 
 
@@ -22,7 +21,14 @@ class PARA(enum.Enum):
     MAX_32FLOAT = 5
 
 
-def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, show=False, success_log=False):
+def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, to_array=True, show=False,
+                success_log=False):
+    if to_array is False:
+        if color == PARA.GRAY:
+            img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        elif color == PARA.COLOR:
+            img = cv2.imread(path, cv2.IMREAD_COLOR)
+        return img
     try:
         if color == PARA.GRAY:
             img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
@@ -59,12 +65,9 @@ def ReadPicture(path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NORM, sho
     return img
 
 
-def WritePicture(img, save_path, color=PARA.GRAY, show=False, success_log=False):
+def WritePicture(img, save_path, show=False, success_log=False):
     try:
-        if color == PARA.GRAY:
-            cv2.imwrite(save_path, img, params=cv2.IMREAD_GRAYSCALE)
-        elif color == PARA.COLOR:
-            cv2.imwrite(save_path, img, params=cv2.IMREAD_COLOR)
+        cv2.imwrite(save_path, img)
     except FileNotFoundError:
         ROOT_LOG.error("FileNotFoundError When Write image from {}".format(save_path))
     if show:
@@ -97,81 +100,28 @@ def LoadFilePicInMemoryWithTag(path, d_size, tag=None, postfix='jpg', color=PARA
         data_line = []
         pic_path = os.path.join(path, dir_name)
         img = ReadPicture(pic_path, d_size=d_size, color=color, normalization=normalization)
-        data_line.append(img)
-        data_line.append(tag)
-        data.append(data_line)
+        if tag is None:
+            data.append(img)
+        else:
+            data_line.append(img)
+            data_line.append(tag)
+            data.append(data_line)
     ROOT_LOG.info("File {} image reading was success".format(path))
     return data
 
 
-def load_all_batches_in_file_with_json(path, json_file):
-    try:
-        with open(os.path.join(path, json_file), 'r')as file_object:
-            contents = json.load(file_object)
-    except FileNotFoundError:
-        print("Not Found json File")
-        return
-    data = []
-    for pic_name in os.listdir(path):
-        if pic_name.endswith('jpg'):
-            data.append(picture_batches_with_json(os.path.join(path, pic_name), ksize=5, json_data=contents[pic_name],
-                                                  show=True))
+def LoadFilePicInMemoryWithAddress(path, postfix='jpg', color=PARA.GRAY):
+    data = {}
+    dir_name_list = ScanFile(path, postfix=postfix)
+    for dir_name in dir_name_list:
+        pic_path = os.path.join(path, dir_name)
+        if color == PARA.GRAY:
+            img = cv2.imread(pic_path, cv2.IMREAD_GRAYSCALE)
+        elif color == PARA.COLOR:
+            img = cv2.imread(pic_path, cv2.IMREAD_COLOR)
+        data[pic_path] = img
+    ROOT_LOG.info("File {} image reading was success".format(path))
     return data
-
-
-def picture_batches_with_json(path, json_data, show=False):
-    img = cv2.imread(path)
-    img = numpy.array(img, dtype=numpy.float32)
-    img = numpy.array(img[:, :, :1], dtype=numpy.float32)
-    # cv2.normalize(img, img, alpha=1, beta=0, norm_type=cv2.NORM_INF)
-    batches = []
-    size = img.shape
-    batches.append(img.reshape(64, 64, 1))
-    batches.append(
-        cv2.resize(img[:int(size[0] / 2), :, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(64, 64, 1))
-    batches.append(
-        cv2.resize(img[:int(size[0] / 2), :, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(64, 64, 1))
-    batches.append(
-        cv2.resize(img[:, :int(size[1] / 2), :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(64, 64, 1))
-    batches.append(
-        cv2.resize(img[:, int(size[1] / 2):, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(64, 64, 1))
-    # 32*32 1/4 4
-    batches.append(
-        cv2.resize(img[:int(size[0] / 2), :int(size[1] / 2), :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(
-            64, 64, 1))
-    batches.append(
-        cv2.resize(img[:int(size[0] / 2), int(size[1] / 2):, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(
-            64, 64, 1))
-    batches.append(
-        cv2.resize(img[int(size[0] / 2):, :int(size[1] / 2), :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(
-            64, 64, 1))
-    batches.append(
-        cv2.resize(img[int(size[0] / 2):, int(size[1] / 2):, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(
-            64, 64, 1))
-
-    # feature map
-    ksize = 10
-    for i, coordinate in enumerate(json_data):
-        i_s = "%d" % i
-        left = max(0, json_data[i_s][0] - ksize)
-        right = min(63, json_data[i_s][0] + ksize)
-        top = max(0, json_data[i_s][1] - ksize)
-        bottom = min(63, json_data[i_s][1] + ksize)
-        try:
-            batches.append(
-                cv2.resize(img[left:right, top:bottom, :], dsize=(64, 64), interpolation=cv2.INTER_CUBIC).reshape(64,
-                                                                                                                  64,
-                                                                                                                  1))
-        except cv2.error:
-            print("out picture: left {}, right{}, top{} ,bottom{}".format(left, right, top, bottom))
-            batches.append(None)
-    if show:
-        for i, pic in enumerate(batches):
-            plt.subplot(10, 10, i + 1)
-            plt.axis('off')
-            plt.imshow(batches[i].reshape(64, 64))
-    plt.show()
-    return batches
 
 
 if __name__ == "__main__":
