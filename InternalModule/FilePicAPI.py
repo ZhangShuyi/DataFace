@@ -70,6 +70,7 @@ def WritePicture(img, save_path, show=False, success_log=False):
         cv2.imwrite(save_path, img)
     except FileNotFoundError:
         ROOT_LOG.error("FileNotFoundError When Write image from {}".format(save_path))
+
     if show:
         cv2.imshow("pic", img)
         cv2.waitKey()

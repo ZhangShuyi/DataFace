@@ -8,6 +8,7 @@ import pandas
 from matplotlib import pyplot as plt
 from InternalModule.Header import *
 from InternalModule.LogSetting import *
+import random
 
 PATH = "D:\\data1\\data3\\datas_face_train"
 JSON_PATH = "D:\\data1\\data3\\datas_face_train_json"
@@ -17,13 +18,14 @@ T_PATH = "D:\\data1\\data3\\datas_face_test"
 T_JSON_PATH = "D:\\data1\\data3\\datas_face_test_json"
 T_FEATURE_PATH = "D:\\data1\\data3\\datas_face_test_feature"
 
-LD_MODEL_PATH = '../ModelAndTxt/shape_predictor_68_face_landmarks.dat'
+LD_MODEL_PATH = 'D:\\face project/ModelAndTxt/shape_predictor_68_face_landmarks.dat'
 face_rec_model_path = 'D:\\face project\\dlib_face\\dlib_face_recognition_resnet_model_v1.dat'
 detector = dlib.get_frontal_face_detector()
-LD_MODEL = dlib.shape_predictor(LD_MODEL_PATH)
+#        n   LD_MODEL = dlib.shape_predictor(LD_MODEL_PATH)
 LANDMARK_SIZE = 68
 D_SIZE = 64
 K_SIZE = 10
+TEST_PRO = 0.2
 feature_map = {}
 
 
@@ -160,6 +162,37 @@ def WriteAllBatchesFile(path, write_path):
         WritePeopleBatchesFile(os.path.join(path, people_name), people_name, write_path)
 
 
+# SET TEST_PRO
+def GetModelAddressCSV(path, model_name, csv_path, log=False):
+    csv_data = pandas.DataFrame(columns=('people_name', 'pic_name', 'Train/Test'))
+    csv_index = 0
+    ROOT_LOG.info("Start to generate Model{}'s Sources address".format(model_name))
+    for people_name in os.listdir(path):
+        train_num = 0
+        test_num = 0
+        pic_name_list = os.listdir(os.path.join(path, people_name))
+        for pic_name in pic_name_list:
+            test_flag = random.random()
+            if test_flag > TEST_PRO:
+                csv_data.loc[csv_index] = [people_name, pic_name, 0]
+                train_num += 1
+            else:
+                csv_data.loc[csv_index] = [people_name, pic_name, 1]
+                test_num += 1
+            csv_index += 1
+        if log:
+            ROOT_LOG.info("people {} address generation finished \n \t \
+                                with test {} train{}".format(people_name, test_num, train_num))
+    csv_data.to_csv(csv_path, 'w')
+    ROOT_LOG.info("Success generate model model{}'s  Address".format(model_name))
+
+
+def GetAllAddressCSV(path, csv_file):
+    for model_name in os.listdir(path):
+        GetModelAddressCSV(os.path.join(path, model_name), model_name, os.path.join(csv_file, model_name + ".csv"))
+
+
 if __name__ == "__main__":
     # GetAllPeopleLandmark("F:\\CAS-PEAL-R1-64_64", "D:\\data_csv")
-    WriteAllBatchesFile("F:\\CAS-PEAL-R1-64_64", "F:\\Feature")
+    # WriteAllBatchesFile("F:\\CAS-PEAL-R1-64_64", "F:\\Feature")
+    GetAllAddressCSV("F:\\Feature", "F:\\CSV")

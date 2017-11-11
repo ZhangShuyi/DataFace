@@ -101,7 +101,7 @@ class Veri_net:
 
             self.correct_prediction = tf.equal(tf.arg_max(self.real_label, 1), tf.arg_max(self.predict_label, 1))
             self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, dtype="float"))
-            # tf.summary.scalar("ce", self.cross_entropy)
+            # tf.summary.scalar("ce", self.loss_function)
             # tf.summary.scalar("ac", self.accuracy)
             self.merged = tf.summary.merge_all()
             if not os.path.exists(WRITE_PATH):

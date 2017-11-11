@@ -1,16 +1,16 @@
 import os
-import cv2
 import numpy
-import InternalModule.Header as Hd
+from InternalModule.Header import *
 import tensorflow as tf
 import pandas as pd
 
-TR_PATH = "D:/data1/data3/datas_face_train_feature"
-TS_PATH = "D:/data1/data3/datas_face_test_feature"
-WR_PATH = "D:/data1/data3/writer"
-MD_PATH = "D:/data1/data3/model"
-TRAIN_CSV = ""
-TEST_CSV = ""
+TR_PATH = "F:/Feature"
+TS_PATH = ""
+WR_PATH = ""
+RE_PATH = "F:"
+MD_PATH = "F:/Model"
+TR_CSV = "F:/CSV"
+PEOPLE_SIZE = 1042
 
 
 class CNN1(object):
@@ -75,23 +75,15 @@ class CNN1(object):
             self.input_width = input_size[1]
             self.input_channel = input_size[2]
         except KeyError:
-            Hd.ROOT_LOG.error("Model {}'s input size is invalid".format(model_name))
+            ROOT_LOG.error("Model {}'s input size is invalid".format(model_name))
             return
         self.model_name = model_name
         self.label_size = label_size
         self.tag_size = len(os.listdir(TR_PATH))
         self.sess = tf.Session()
+        ROOT_LOG.info("Model {} init success".format(self.model_name))
 
-    def __del__(self):
-        Hd.ROOT_LOG.info("Model {} is deleted".format(self.model_name))
-
-    def load_data(self, train_path, test_path, layer_path=None):
-        self.data_pt, self.data_lt = self.load_test_data(test_path, sample_size=100, layer_path=layer_path)
-        self.data_p, self.data_l = self.load_train_data(train_path, layer_path=layer_path)
-        print("Info: model {} data load was completed".format(self.model_name))
-
-    def build_model(self, reuse_flag):
-
+    def build_model(self, reuse_flag, record=False):
         self.image_size = [self.input_height, self.input_width, self.input_channel]
         self.real_label = tf.placeholder(tf.float32, shape=[None, self.label_size], name='Real_Label')
         self.image_input = tf.placeholder(tf.float32, shape=[None] + self.image_size, name='Image')
@@ -138,23 +130,27 @@ class CNN1(object):
             self.feature = self.add_full_connection_layer(nf1, 4 * 4 * 60 + 2 * 2 * 80, out_dim=100, stddev=0.1,
                                                           name="feature", active_function=self.lrelu)
 
-            self.predict_label = self.add_full_connection_layer(self.feature, in_dim=100, out_dim=59, stddev=0.1,
+            self.predict_label = self.add_full_connection_layer(self.feature, in_dim=100, out_dim=self.label_size,
+                                                                stddev=0.1,
                                                                 name="label", active_function=tf.nn.softmax)
 
-            self.cross_entropy = -tf.reduce_mean(
-                tf.reduce_sum(self.real_label * tf.log(self.predict_label), reduction_indices=[1]))
-            # tf.summary.scalar("loss", self.cross_entropy)
-            self.train_step = tf.train.AdamOptimizer(0.01, name="Train").minimize(self.cross_entropy)
+            self.loss_function = tf.reduce_sum(tf.square(tf.subtract(self.real_label, self.predict_label)))
+            # self.loss_function = -tf.reduce_mean(
+            #    tf.reduce_sum(self.real_label * tf.log(self.predict_label), reduction_indices=[1]))
+            self.train_step = tf.train.AdamOptimizer(0.001, name="Train").minimize(self.loss_function)
 
         self.correct_prediction = tf.equal(tf.arg_max(self.real_label, 1), tf.arg_max(self.predict_label, 1))
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, dtype="float"))
-        # tf.summary.scalar("AC", self.accuracy)
-        self.merged = tf.summary.merge_all()
-        if not os.path.exists(WR_PATH):
-            os.mkdir(WR_PATH)
-        if not os.path.exists(os.path.join(WR_PATH, self.model_name)):
-            os.mkdir(os.path.join(WR_PATH, self.model_name))
-        self.writer = tf.summary.FileWriter(os.path.join(WR_PATH, self.model_name), self.sess.graph)
+        if record:
+            tf.summary.scalar("AC", self.accuracy)
+            tf.summary.scalar("loss", self.loss_function)
+            self.merged = tf.summary.merge_all()
+            if not os.path.exists(WR_PATH):
+                os.mkdir(WR_PATH)
+            if not os.path.exists(os.path.join(WR_PATH, self.model_name)):
+                os.mkdir(os.path.join(WR_PATH, self.model_name))
+            self.writer = tf.summary.FileWriter(os.path.join(WR_PATH, self.model_name), self.sess.graph)
+
         self.saver = tf.train.Saver()
 
     def initial_para(self):
@@ -184,50 +180,34 @@ class CNN1(object):
         return self.sess.run(self.feature,
                              feed_dict={self.image_input: [image], self.real_label: [numpy.zeros(self.label_size)]})[0]
 
-    def load_test_data(self, path, layer_path=None, sample_size=None):
-        data_t = []
-        if layer_path is None:
-            for i, people_name in enumerate(os.listdir(path)):
-                tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
-                tag[i] = 1.0
-                data_t += Read_API.load_all_pictures_in_file(os.path.join(path, people_name), dst_size=32, tag=tag)
-        else:
-            for i, people_name in enumerate(os.listdir(path)):
-                tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
-                tag[i] = 1.0
-                data_t += Read_API.load_all_pictures_in_file(os.path.join(path, people_name, layer_path), dst_size=32,
-                                                             tag=tag)
-        numpy.random.shuffle(data_t)
-        data_t = data_t[:sample_size]
-        data_pt = [p[0] for p in data_t]
-        data_lt = [l[1] for l in data_t]
-        print("Info: test data shape {}".format(numpy.array(data_pt).shape))
-        return data_pt, data_lt
-
-    def load_train_data(self, path, layer_path=None):
-        data_t = []
-        if layer_path is None:
-            for i, people_name in enumerate(os.listdir(path)):
-                tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
-                tag[i] = 1.0
-                data_t += Hd.load_all_pictures_in_file(os.path.join(path, people_name), dst_size=32,
-                                                                   tag=tag)
-        else:
-            for i, people_name in enumerate(os.listdir(path)):
-                tag = numpy.zeros([self.tag_size], dtype=numpy.float32)
-                tag[i] = 1.0
-                data_t += Hd.load_all_pictures_in_file(os.path.join(path, people_name, layer_path),
-                                                                   dst_size=32,
-                                                                   tag=tag)
-        numpy.random.shuffle(data_t)
-        data_t = data_t
-        data_p = [p[0] for p in data_t]
-        data_l = [l[1] for l in data_t]
-        print("Info: train data shape {}".format(numpy.array(data_p).shape))
-        return data_p, data_l
-
-    def loadTrainDataFromDisk(self, batch_size):
-        pd.read_csv(TRAIN_CSV)
+    def loadDataInMemory(self, path, csv_path, number_limit=0):
+        csv_data = pd.read_csv(csv_path).values
+        numpy.random.shuffle(csv_data)
+        tr_data = []
+        tr_lab = []
+        ts_data = []
+        ts_lab = []
+        train_num = 0
+        test_num = 0
+        for index, line in enumerate(csv_data):
+            line = line[0]
+            [number, people_name, pic_name, train_tag] = str(line).split('w')
+            if number_limit != 0 and index > number_limit:
+                break
+            lab = numpy.zeros(self.label_size)
+            lab[int(people_name) - 1] = 1.0
+            img = ReadPicture(os.path.join(path, people_name, pic_name), d_size=32, color=PARA.GRAY,
+                              normalization=PARA.MAX_32FLOAT)
+            if train_tag == '0':
+                tr_data.append(img)
+                tr_lab.append(lab)
+                train_num += 1
+            else:
+                ts_data.append(img)
+                ts_lab.append(lab)
+                test_num += 1
+        ROOT_LOG.info("Model {}'s data was loaded (TR{}TS{})".format(self.model_name, train_num, test_num))
+        self.data_p, self.data_l, self.data_pt, self.data_lt = tr_data, tr_lab, ts_data, ts_lab
 
     def trainInMemory(self, step, batchsize):
         print("Info: model {} train process start".format(self.model_name))
@@ -245,43 +225,33 @@ class CNN1(object):
 
             if i % 100 == 0:
                 print("\t Step {}".format(i))
-                print("\t CE {}".format(self.get_variable(self.cross_entropy, feed_dict=test_feed)))
+                print("\t LF {}".format(self.get_variable(self.loss_function, feed_dict=test_feed)))
                 print("\t AC {}".format(self.get_variable(self.accuracy, feed_dict=test_feed)))
+                # print("\t Real {}".format(self.get_variable(self.real_label, feed_dict=test_feed)))
+                # print("\t Result {}".format(self.get_variable(self.predict_label, feed_dict=test_feed)))
         return self.get_variable(self.accuracy, feed_dict=test_feed)
 
-    def trainInDisk(self, step, batch_size):
-        print("Info: model {} train process start(in disk)".format(self.model_name))
-        for i in range(step):
-            train_start = (batchsize * i) % trainsamplesize
-            train_end = (batchsize * (i + 1)) % trainsamplesize
-            if train_end < train_start:
-                continue
-            train_feed = {self.image_input: self.data_p[train_start:train_end],
-                          self.real_label: self.data_l[train_start:train_end]}
-            test_feed = {self.image_input: self.data_pt, self.real_label: self.data_lt}
-            self.sess.run(self.train_step, feed_dict=train_feed)
-            # self.write_variable(index=i, feed_dict=test_feed)
-
-            if i % 100 == 0:
-                print("\t Step {}".format(i))
-                print("\t CE {}".format(self.get_variable(self.cross_entropy, feed_dict=test_feed)))
-                print("\t AC {}".format(self.get_variable(self.accuracy, feed_dict=test_feed)))
+    def trainInDisk(self, step, batchsize):
+        """
+        To do
+        :param step:
+        :param batchsize:
+        :return:
+        """
         return self.get_variable(self.accuracy, feed_dict=test_feed)
 
 
 if __name__ == "__main__":
     namelist = os.listdir(TR_PATH)
-    model_list = os.listdir(os.path.join(TR_PATH, os.listdir(TR_PATH)[0]))
-    print("Info: model_amount {}".format(len(model_list)))
-    for i, model_name in enumerate(model_list):
-        if i < 74:
-            continue
-        C1 = CNN1(input_height=32, input_width=32, label_size=59, input_channel=1, model_name=model_name)
+    print("Info: model_amount {}".format(len(namelist)))
+    for i, model_name in enumerate(namelist):
+        C1 = CNN1(input_size=[32, 32, 1], label_size=PEOPLE_SIZE, model_name=model_name)
         C1.build_model(False)
         C1.initial_para()
-        C1.load_data(TR_PATH, TS_PATH, layer_path=model_name)
-        AC = C1.train(batchsize=50, step=5000)
-        output = open("data3/result.txt", 'a')
+        C1.loadDataInMemory(os.path.join(TR_PATH, model_name), os.path.join(TR_CSV, str(i) + ".csv"),
+                            number_limit=10000)
+        AC = C1.trainInMemory(batchsize=100, step=50000)
+        output = open(os.path.join(RE_PATH, "result.txt"), 'a')
         output.write("model {}: ac {} \n".format(model_name, AC))
         output.close()
         C1.save_para()

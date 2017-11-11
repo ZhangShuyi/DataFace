@@ -89,9 +89,9 @@ h_fc3 = add_layer(h_fc2, in_size=512, out_size=256, n_layer="3", activation_func
 h_fc4 = add_layer(h_fc3, in_size=256, out_size=256, n_layer="4", activation_function=tf.nn.softmax)
 label_out = add_layer(h_fc4, in_size=256, out_size=2, n_layer="5", activation_function=tf.nn.softmax)
 
-with tf.name_scope("cross_entropy"):
+with tf.name_scope("loss_function"):
     cross_entropy = -tf.reduce_mean(tf.reduce_sum(y_label * tf.log(label_out), reduction_indices=[1]))
-    tf.summary.scalar("cross_entropy", cross_entropy)
+    tf.summary.scalar("loss_function", cross_entropy)
 with tf.name_scope("train"):
     train_step = tf.train.AdamOptimizer(0.0003).minimize(cross_entropy)
 

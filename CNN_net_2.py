@@ -82,7 +82,7 @@ w_fc5 = filter_variable([1024, 60])
 b_fc5 = bias_variable([60])
 label_out = tf.nn.softmax(tf.matmul(h_fc2, w_fc5) + b_fc5)
 
-# cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=label_out, labels=y_label))
+# loss_function = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=label_out, labels=y_label))
 cross_entropy = -tf.reduce_mean(tf.reduce_sum(y_label * tf.log(label_out), reduction_indices=[1]))
 train_step = tf.train.AdamOptimizer(0.003).minimize(cross_entropy)
 
@@ -111,7 +111,7 @@ for i in range(1000):
     train_step.run(
         feed_dict={x_image_input: dataP, y_label: dataL})
     print(
-        "cross_entropy %f" % sess.run(cross_entropy, feed_dict={x_image_input: dataP, y_label: dataL}))
+        "loss_function %f" % sess.run(cross_entropy, feed_dict={x_image_input: dataP, y_label: dataL}))
     print("ac: %f" % sess.run(accuracy, feed_dict={x_image_input: dataP_t[:200], y_label: dataL_t[:200]}))
 
 

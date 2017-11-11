@@ -131,9 +131,9 @@ hp_l2_flat = tf.concat([hp1_l2_flat, hp2_l2_flat], 1)
 h_fc1 = add_layer(hp_l2_flat, in_size=2 * 8 * 8 * 64, out_size=512, n_layer="1", activation_function=tf.nn.softmax)
 label_out = add_layer(h_fc1, in_size=512, out_size=2, n_layer="5", activation_function=tf.nn.softmax)
 
-with tf.name_scope("cross_entropy"):
+with tf.name_scope("loss_function"):
     cross_entropy = -tf.reduce_mean(tf.reduce_sum(y_label * tf.log(label_out), reduction_indices=[1]))
-    tf.summary.scalar("cross_entropy", cross_entropy)
+    tf.summary.scalar("loss_function", cross_entropy)
 
 with tf.name_scope("train"):
     train_step = tf.train.AdamOptimizer(0.0003).minimize(cross_entropy)
