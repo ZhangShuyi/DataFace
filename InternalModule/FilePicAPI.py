@@ -98,6 +98,7 @@ def LoadPicsAsDict(pic_path, d_size=0, color=PARA.GRAY, normalization=PARA.NO_NO
 def SavePicsAsJson(img_dict, json_path):
     with open(json_path, 'w') as file:
         json.dump(img_dict, file)
+    file.close()
     ROOT_LOG.info("SavePicsAsJson: save_path {} success".format(json_path))
 
 
@@ -125,25 +126,26 @@ def ScanFile(directory, prefix=None, postfix=None):
     return files_list
 
 
-def ReadTrain1Data(model_name):
-    path = os.path.join(TRAIN_PATH1, model_name + ".json")
-    data = LoadPicsFromJson(path)
-    PRINT_LOG.info("Read Model {} Train 1 Data".format(model_name))
-    return data
+# def ReadTrain1Data(model_name):
+#     path = os.path.join(TRAIN_PATH1, model_name + ".json")
+#     data = LoadPicsFromJson(path)
+#     PRINT_LOG.info("Read Model {} Train 1 Data".format(model_name))
+#     return data
+#
+#
+# def ReadTrain2Data(model_name):
+#     path = os.path.join(TRAIN_PATH2, model_name + ".json")
+#     data = LoadPicsFromJson(path)
+#     PRINT_LOG.info("Read Model {} Train 2 Data".format(model_name))
+#     return data
+#
+#
+# def ReadTestData(model_name):
+#     path = os.path.join(TEST_PATH, model_name + ".json")
+#     data = LoadPicsFromJson(path)
+#     PRINT_LOG.info("Read Model {} Test  Data".format(model_name))
+#     return data
 
-
-def ReadTrain2Data(model_name):
-    path = os.path.join(TRAIN_PATH2, model_name + ".json")
-    data = LoadPicsFromJson(path)
-    PRINT_LOG.info("Read Model {} Train 2 Data".format(model_name))
-    return data
-
-
-def ReadTestData(model_name):
-    path = os.path.join(TEST_PATH, model_name + ".json")
-    data = LoadPicsFromJson(path)
-    PRINT_LOG.info("Read Model {} Test  Data".format(model_name))
-    return data
 
 
 if __name__ == "__main__":

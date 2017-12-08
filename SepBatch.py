@@ -16,6 +16,7 @@ import random
 # face_rec_model_path = 'D:\\face project\\dlib_face\\dlib_face_recognition_resnet_model_v1.dat'
 detector = dlib.get_frontal_face_detector()
 LD_MODEL = dlib.shape_predictor(LD_MODEL_PATH)
+MODEL_NUMBER_BY_STEP = 10
 
 
 def GetPicLandmarkDict(img):
@@ -147,7 +148,10 @@ def GetPeopleBatchesDict(people_name):
         batches = GetPicBatches(img, D_SIZE, K_SIZE)
         for model in MODEL_LIST:
             model_index = int(model)
-            dict[model][pic_name] = batches[model_index].tolist()
+            if batches[model_index] is None:
+                dict[model][pic_name] = None
+            else:
+                dict[model][pic_name] = batches[model_index].tolist()
     return dict
 
 
@@ -172,18 +176,30 @@ def WriteAllBatches():
             PRINT_LOG.info("Write Test data Model {} Batches successfully".format(model))
 
     def WriteTrain1Batches():
-        dict = {}
-        for model in MODEL_LIST:
-            dict[model] = {}
-        for index, people_name in enumerate(PEOPLE_TRAIN1):
-            people_batch = GetPeopleBatchesDict(people_name)
+        model_num_by_step = MODEL_NUMBER_BY_STEP
+        start_index = 0
+        while start_index < len(MODEL_LIST):
+            dict = {}
+            for model in MODEL_LIST:
+                dict[model] = {}
+            for index, people_name in enumerate(PEOPLE_TRAIN1):
+                people_batch = GetPeopleBatchesDict(people_name)
+                for model_index, model in enumerate(MODEL_LIST):
+                    if model_index < start_index:
+                        continue
+                    if model_index >= start_index + model_num_by_step:
+                        break
+                    dict[model][people_name] = people_batch[model]
+                PRINT_LOG.info("Get index{} people {}'s all batches".format(index, people_name))
             for model_index, model in enumerate(MODEL_LIST):
-                dict[model][people_name] = people_batch[model]
-            PRINT_LOG.info("Get index{} people {}'s all batches".format(index, people_name))
-        for model in MODEL_LIST:
-            write_path = os.path.join(TRAIN_PATH1, model + ".json")
-            SavePicsAsJson(dict[model], write_path)
-            PRINT_LOG.info("Write Train1 data Model {} Batches successfully".format(model))
+                if model_index < start_index:
+                    continue
+                if model_index > start_index + model_num_by_step:
+                    break
+                write_path = os.path.join(TRAIN_PATH1, model + ".json")
+                SavePicsAsJson(dict[model], write_path)
+                PRINT_LOG.info("Write Train1 data Model {} Batches successfully".format(model))
+            start_index += model_num_by_step
 
     def WriteTrain2Batches():
         dict = {}
@@ -199,9 +215,9 @@ def WriteAllBatches():
             SavePicsAsJson(dict[model], write_path)
             PRINT_LOG.info("Write Train2 Model {} Batches successfully".format(model))
 
-    WriteTestBatches()
+    # WriteTestBatches()
     WriteTrain1Batches()
-    WriteTrain2Batches()
+    # WriteTrain2Batches()
 
 
 if __name__ == "__main__":

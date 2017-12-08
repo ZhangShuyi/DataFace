@@ -208,6 +208,24 @@ class CNN1(object):
         ROOT_LOG.info("Model {}'s data was loaded (TR:{} TS:{})".format(self.model_name, len(tr_data), len(ts_data)))
         self.data_p, self.data_l, self.data_pt, self.data_lt = tr_data, tr_lab, ts_data, ts_lab
 
+    def structureDataForDisk(self):
+        self.data_p, self.data_l, self.data_pt, self.data_lt = [], [], [], []
+        for index, row_info in TRAIN1_INFO.iterrows():
+            people_index = row_info.identity
+
+            lab = numpy.zeros(self.label_size)
+            lab[people_index] = 1.0
+            flag = random.random()
+            if flag > LAYER1_TEST_PRO:
+                self.data_p.append(img)
+                self.data_l.append(lab)
+            else:
+                self.data_pt.append(img)
+                self.data_lt.append(lab)
+            if index % 1000 == 0:
+                PRINT_LOG.info("Load {} picture for model {} TR{} TS{}".format(index, self.model_name, len(self.data_p),
+                                                                               len(self.data_pt)))
+
     def trainInMemory(self, step, batch_size):
         print("Info: model {} train process start".format(self.model_name))
         sample_size = len(self.data_p)
@@ -227,18 +245,46 @@ class CNN1(object):
                 print("\t Step {}".format(i))
                 print("\t LF {}".format(self.get_variable(self.loss_function, feed_dict=test_feed)))
                 print("\t AC {}".format(self.get_variable(self.accuracy, feed_dict=test_feed)))
+                print("\t TLF {}".format(self.get_variable(self.loss_function, feed_dict=train_feed)))
+                print("\t TAC {}".format(self.get_variable(self.accuracy, feed_dict=train_feed)))
         return self.get_variable(self.accuracy, feed_dict=test_feed)
+
+    def trainInDisk(self, step, batch_size):
+        test_feed = {self.image_input: self.data_pt, self.real_label: self.data_lt}
+        sample_size = len(self.data_p)
+        for i in range(step):
+            train_start = (batch_size * i) % sample_size
+            train_end = (batch_size * (i + 1)) % sample_size
+            if train_end < train_start:
+                continue
+            # train_feed = {self.image_input: self.data_p,
+            #              self.real_label: self.data_l}
+            train_feed = {self.image_input: self.data_p[train_start:train_end],
+                          self.real_label: self.data_l[train_start:train_end]}
+            self.sess.run(self.train_step, feed_dict=train_feed)
+
+            if i % 100 == 0:
+                print("\t Step {}".format(i))
+                print("\t LF {}".format(self.get_variable(self.loss_function, feed_dict=test_feed)))
+                print("\t AC {}".format(self.get_variable(self.accuracy, feed_dict=test_feed)))
+                print("\t TLF {}".format(self.get_variable(self.loss_function, feed_dict=train_feed)))
+                print("\t TAC {}".format(self.get_variable(self.accuracy, feed_dict=train_feed)))
+        return self.get_variable(self.accuracy, feed_dict=test_feed)
+
+        # def showTestResult(self):
+        #     for index, img in self.data_pt:
+        #         result=tf.arg_max(self.get_variable(self.predict_label,feed_dict={self.image_input: img,self.real_label: self.data_lt[]})
 
 
 if __name__ == "__main__":
     for i, model_name in enumerate(MODEL_LIST):
-        C1 = CNN1(input_size=[32, 32, 1], label_size=len(PEOPLE_TRAIN1), model_name=model_name,
+        C1 = CNN1(input_size=[D_SIZE, D_SIZE, 1], label_size=len(DATA.values), model_name=model_name,
                   feature_id_length=FEATURE_ID_LENTH)
         C1.build_model(False)
         C1.initial_para()
-        C1.loadAllDataInMemory()
-        C1.structureDataInMemory()
-        AC = C1.trainInMemory(batch_size=100, step=35000)
+        # C1.loadAllDataInMemory()
+        C1.structureDataForDisk()
+        AC = C1.trainInDisk(batch_size=100, step=35000)
         output = open(os.path.join(RESULT_PATH, "result.txt"), 'a')
         output.write("model {}: ac {} \n".format(model_name, AC))
         output.close()
