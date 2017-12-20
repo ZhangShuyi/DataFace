@@ -40,7 +40,7 @@ class VERNET:
         return tf.maximum(x, x * leak)
 
     def __init__(self, model_feature_size, name):
-        self.model_num = len(MODEL_LIST)
+        self.model_num = len(LIST_MODEL)
         self.model_feature_size = model_feature_size
         self.name = name
         self.sess = tf.Session()
@@ -54,15 +54,15 @@ class VERNET:
         self.sess.run(init)
 
     def save_para(self):
-        if not os.path.exists(LAYER2_MODEL):
-            os.mkdir(LAYER2_MODEL)
-        save_path = self.saver.save(self.sess, os.path.join(LAYER2_MODEL, self.name))
+        if not os.path.exists(PATH_LAYER2_MODEL):
+            os.mkdir(PATH_LAYER2_MODEL)
+        save_path = self.saver.save(self.sess, os.path.join(PATH_LAYER2_MODEL, self.name))
         print("Info: save verification model at {}".format(save_path))
 
     def restore_para(self):
-        model_file = tf.train.latest_checkpoint(os.path.join(LAYER2_MODEL))
+        model_file = tf.train.latest_checkpoint(os.path.join(PATH_LAYER2_MODEL))
         self.saver.restore(self.sess, model_file)
-        print("Info: restore model from {}".format(os.path.join(LAYER2_MODEL, self.name)))
+        print("Info: restore model from {}".format(os.path.join(PATH_LAYER2_MODEL, self.name)))
         '''
         self.saver.restore(self.sess, os.path.join(LAYER2_MODEL, self.name))
         print("Info: restore verification model from {}".format(os.path.join(LATER2_MODEL, self.name)))
@@ -70,7 +70,7 @@ class VERNET:
 
     def get_featureID_tr(self, people_name, pic_name):
         featureID = []
-        for index, model in enumerate(MODEL_LIST):
+        for index, model in enumerate(LIST_MODEL):
             featureID += self.hand_dict_tr[model][people_name][pic_name]
         if len(featureID) == self.model_feature_size * self.model_num:
             return featureID
@@ -80,7 +80,7 @@ class VERNET:
 
     def get_featureID_ts(self, people_name, pic_name):
         featureID = []
-        for index, model in enumerate(MODEL_LIST):
+        for index, model in enumerate(LIST_MODEL):
             featureID += self.hand_dict_ts[model][people_name][pic_name]
         if len(featureID) == self.model_feature_size * self.model_num:
             return featureID
@@ -131,11 +131,11 @@ class VERNET:
             self.correct_prediction = tf.equal(tf.argmax(self.real_label, 1), tf.argmax(self.l3_output, 1))
             self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, dtype="float"))
             self.merged = tf.summary.merge_all()
-            if not os.path.exists(BROAD_PATH):
-                os.mkdir(BROAD_PATH)
-            if not os.path.exists(os.path.join(BROAD_PATH, self.name)):
-                os.mkdir(os.path.join(BROAD_PATH, self.name))
-            self.writer = tf.summary.FileWriter(os.path.join(BROAD_PATH, self.name), self.sess.graph)
+            if not os.path.exists(PATH_BROAD):
+                os.mkdir(PATH_BROAD)
+            if not os.path.exists(os.path.join(PATH_BROAD, self.name)):
+                os.mkdir(os.path.join(PATH_BROAD, self.name))
+            self.writer = tf.summary.FileWriter(os.path.join(PATH_BROAD, self.name), self.sess.graph)
             self.saver = tf.train.Saver()
 
     def build_model(self):
@@ -191,11 +191,11 @@ class VERNET:
             # tf.summary.scalar("ce", self.loss_function)
             # tf.summary.scalar("ac", self.accuracy)
             self.merged = tf.summary.merge_all()
-            if not os.path.exists(BROAD_PATH):
-                os.mkdir(BROAD_PATH)
-            if not os.path.exists(os.path.join(BROAD_PATH, self.name)):
-                os.mkdir(os.path.join(BROAD_PATH, self.name))
-            self.writer = tf.summary.FileWriter(os.path.join(BROAD_PATH, self.name), self.sess.graph)
+            if not os.path.exists(PATH_BROAD):
+                os.mkdir(PATH_BROAD)
+            if not os.path.exists(os.path.join(PATH_BROAD, self.name)):
+                os.mkdir(os.path.join(PATH_BROAD, self.name))
+            self.writer = tf.summary.FileWriter(os.path.join(PATH_BROAD, self.name), self.sess.graph)
             self.saver = tf.train.Saver()
 
     def get_accuracy(self, batch_size):
@@ -242,13 +242,13 @@ class VERNET:
     def load_all_json(self):
         ROOT_LOG.info("VerNet {} Load all json begin".format(self.name))
         self.hand_dict_tr = {}
-        for index, model in enumerate(MODEL_LIST):
+        for index, model in enumerate(LIST_MODEL):
             read_path = os.path.join(FEATURE_PATH, model + ".json")
             with open(read_path, 'r') as file:
                 self.hand_dict_tr[model] = json.load(file)
 
         self.hand_dict_ts = {}
-        for index, model in enumerate(MODEL_LIST):
+        for index, model in enumerate(LIST_MODEL):
             read_path = os.path.join(FEATURE_PATH, model + "_t.json")
             with open(read_path, 'r') as file:
                 self.hand_dict_ts[model] = json.load(file)
@@ -262,7 +262,7 @@ class VERNET:
         else:
             return
         people_name = random.sample(people_list, 1)[0]
-        pic_name = random.sample(os.listdir(os.path.join(DATA_PATH, people_name)), 2)
+        pic_name = random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name)), 2)
         if TRorTs == "TR":
             return [self.get_featureID_tr(people_name, pic_name[0]), self.get_featureID_tr(people_name, pic_name[1])]
         if TRorTs == "TS":
@@ -277,8 +277,8 @@ class VERNET:
             return
         people_name = random.sample(people_list, 2)
         pic_name = []
-        pic_name.append(random.sample(os.listdir(os.path.join(DATA_PATH, people_name[0])), 1)[0])
-        pic_name.append(random.sample(os.listdir(os.path.join(DATA_PATH, people_name[1])), 1)[0])
+        pic_name.append(random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name[0])), 1)[0])
+        pic_name.append(random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name[1])), 1)[0])
         if TRorTs == "TR":
             return [self.get_featureID_tr(people_name[0], pic_name[0]),
                     self.get_featureID_tr(people_name[1], pic_name[1])]
@@ -324,7 +324,7 @@ class VERNET:
 
 
 if __name__ == "__main__":
-    V = VERNET(model_feature_size=FEATURE_ID_LENTH, name="Verification")
+    V = VERNET(model_feature_size=TRAIN_PARA_FEATURE_ID_LEN, name="Verification")
     V.build_model()
     V.initial_para()
     V.load_all_json()

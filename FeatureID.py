@@ -15,9 +15,9 @@ def GetTestForModel(model_name):
 
 def GetModelPartID(image_dict, model_name):
     C = CNN1(input_size=[32, 32, 1], label_size=len(PEOPLE_TRAIN1), model_name=model_name,
-             feature_id_length=FEATURE_ID_LENTH)
+             feature_id_length=TRAIN_PARA_FEATURE_ID_LEN)
     C.build_model(False)
-    C.restore_para()
+    C.para_restore()
     partID_dict = {}
     for people_name in image_dict:
         partID_dict[people_name] = {}
@@ -31,7 +31,7 @@ def GetModelPartID(image_dict, model_name):
 
 
 def WriteTestPartID():
-    for i, model_name in enumerate(MODEL_LIST):
+    for i, model_name in enumerate(LIST_MODEL):
         img_dict = GetTestForModel(model_name)
         partID_dict = GetModelPartID(img_dict, model_name)
         write_path = os.path.join(FEATURE_PATH, model_name + "_t.json")
@@ -41,7 +41,7 @@ def WriteTestPartID():
 
 
 def WriteTrain2PartID():
-    for i, model_name in enumerate(MODEL_LIST):
+    for i, model_name in enumerate(LIST_MODEL):
         img_dict = GetTrain2ForModel(model_name)
         partID_dict = GetModelPartID(img_dict, model_name)
         write_path = os.path.join(FEATURE_PATH, model_name + ".json")

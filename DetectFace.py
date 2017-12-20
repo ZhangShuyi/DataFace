@@ -1,50 +1,90 @@
+"""
+    detect face
+    version 2.0
+    Show detail
+"""
+import cv2
 import dlib
+import sys
+import dlib
+from skimage import io
 import os
 import numpy
+import pickle
 from InternalModule.FilePicAPI import ReadPicture
-LANDMARK_MODEL = 'ModelAndTxt\shape_predictor_68_face_landmarks.dat'
-face_rec_model_path = 'D:\\face project\\dlib_face\\dlib_face_recognition_resnet_model_v1.dat'
-detector = dlib.get_frontal_face_detector()
-sp = dlib.shape_predictor(LANDMARK_MODEL)
-facerec = dlib.face_recognition_model_v1(face_rec_model_path)
-THRESHOLD = 0.6
+from InternalModule.Envs import *
+from matplotlib import pyplot as plt
 
 
-def filter_one_file(path):
-    des = []
-    positive_sample = 1
-    negative_sample = 1
-    # print(os.path.join(path, file))
-    img = ReadPicture(path)
-    rect = dlib.rectangle(0, 0, 64, 64)
-    shape = sp(img, rect)
-    face_descriptor = facerec.compute_face_descriptor(img, shape)
-    if i == 0:
-        des = face_descriptor
-        try:
-            os.rename(os.path.join(path, file), os.path.join(path, "P%08d.jpg" % positive_sample))
-            positive_sample += 1
-        except FileExistsError:
-            print("already did")
-    else:
-        dist = numpy.linalg.norm(numpy.array(des) - numpy.array(face_descriptor))
-        # print(dist)
-        if dist < THRESHOLD:
-            os.rename(os.path.join(path, file), os.path.join(path, "P%08d.jpg" % positive_sample))
-            positive_sample += 1
-        else:
-            os.rename(os.path.join(path, file), os.path.join(path, "N%08d.jpg" % negative_sample))
-            negative_sample += 1
-            # dlib.hit_enter_to_continue()
+class detectFace:
+    def __init__(self):
+        self.detector = dlib.get_frontal_face_detector()
+        self.face_detector = dlib.get_frontal_face_detector()
+        self.landmark_predictor = dlib.shape_predictor(FILE_LD_MODEL)
+
+    def GetPicFace(self, img):
+        if img is None:
+            return False
+        faces_rect = self.face_detector(img, 1)
+        if len(faces_rect) <= 0:
+            PRINT_LOG.warn("GetPicFace have no face!")
+            return False
+        for k, d in enumerate(faces_rect):
+            shape = self.landmark_predictor(img, d)
+            for i in range(68):
+                pt = shape.part(i)
+                plt.plot(pt.x, pt.y, 'ro')
+                plt.imshow(img)
+                plt.show()
+
+    def GetPicFaceV2(self, img):
+        faces = self.detector(img, 1)
+        face_img = []
+        pic_shape = numpy.array(img).shape
+        if (len(faces) > 0):
+            for k, d in enumerate(faces):
+                top = max(0, d.top() - 20)
+                left = max(0, d.left() - 20)
+                bottom = min(pic_shape[0], d.bottom() + 20)
+                right = min(pic_shape[1], d.right() + 20)
+                face_img.append(img[top:bottom, left:right])
+        return face_img
+
+    def ShowDetail(self, img):
+        fig = plt.figure()
+        face_list = self.GetPicFaceV2(img)
+        for index, face in enumerate(face_list):
+            ax = fig.add_subplot(1, len(face_list), index + 1)
+            ax.imshow(face, cmap='gray')
+            print(numpy.array(face.shape))
+        fig.show()
+        fig.waitforbuttonpress()
+
+    def ReadAPickle(self, path):
+        with open(path, 'rb') as file:
+            data = pickle.load(file)
+        print(type(data))
+
+    # def FindAllFace(self, path, save_path, group_size=100):
+    #     pic_dict = {}
+    #     group_index = 1
+    #     for index, pic_name in enumerate(os.listdir(path)):
+    #         if (index + 1) % group_size == 0:
+    #             with open(os.path.join(save_path, "%08d" % group_index), 'wb') as file:
+    #                 pickle.dump(pic_dict, file)
+    #             file.close()
+    #             pic_dict = []
+    #             PRINT_LOG.info("group index {} was generated".format(group_index))
+    #             group_index += 1
+    #         face = self.GetPicFaceV2(ReadPicture(os.path.join(path, pic_name), to_array=False))
+    #         if len(face) == 0:
+    #             PRINT_LOG.warn("index {} pic_name {} have no face!".format(index, pic_name))
+    #             continue
+    #         else:
+    #             pic_dic
 
 
-def change_name(path, j):
-    for file_path in os.listdir(path):
-        # print(os.path.join(path, "%03d" % j + file_path))
-        os.rename(os.path.join(path, file_path), os.path.join(path, "%03d" % j + file_path))
-
-
-for i, file_path in enumerate(os.listdir(path)):
-    change_name(os.path.join(path, file_path), i)
-    # filter_one_file(os.path.join(path, file_path))
-    print("finish %s" % os.path.join(path, file_path))
+if __name__ == "__main__":
+    # FindAllFace(ORIGIN_DATA_PATH, PICKLE_PATH)
+    # ReadaPickle(os.path.join(PICKLE_PATH, os.listdir(PICKLE_PATH)[0]))
+    pass

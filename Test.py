@@ -21,7 +21,7 @@ PEOPLE_SIZE = 1042
 model_name = "0076"
 C1 = CNN1(input_size=[32, 32, 1], label_size=PEOPLE_SIZE, model_name=model_name)
 C1.build_model(False)
-C1.restore_para()
+C1.para_restore()
 
 
 def loadDataInMemory(path, csv_path):

@@ -107,7 +107,7 @@ def LoadPicsFromJson(json_path):
         data = json.load(file)
     for people_name in data:
         for pic_name in data[people_name]:
-            data[people_name][pic_name] = numpy.array(data[people_name][pic_name]).reshape(D_SIZE, D_SIZE, 1)
+            data[people_name][pic_name] = numpy.array(data[people_name][pic_name]).reshape(DATA_PARA_D_SIZE, DATA_PARA_D_SIZE, 1)
     return data
 
 
