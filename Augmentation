@@ -1,0 +1,29 @@
+"""
+    version 1.0
+    augmentation
+"""
+from InternalModule.Envs import *
+import cv2
+
+
+class Augmentation:
+    @staticmethod
+    def transaction(img, x1, y1, x2, y2, d, norm):
+        dict = {}
+        l_x1 = max(x1 - d, 0)
+        l_x2 = x2 - d
+        dict['tran_l'] = cv2.resize(img[y1:y2, l_x1:l_x2], (norm, norm))
+        r_x1 = min(x2 + d, img.shape[1])
+        r_x2 = x1 + d
+        dict['tran_r'] = cv2.resize(img[y1:y2, r_x1:r_x2], (norm, norm))
+        t_y1 = max(y1 - d, 0)
+        t_y2 = y2 - d
+        dict['tran_t'] = cv2.resize(img[t_y1:t_y2, x1:x2], (norm, norm))
+        b_y1 = min(y2 + d, img.shape[0])
+        b_y2 = y1 + d
+        dict['tran_b'] = cv2.resize(img[b_y1:b_y2, x1:x2], (norm, norm))
+        return dict
+
+    @staticmethod
+    def disturb_landmark(img, landmark):
+        pass

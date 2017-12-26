@@ -4,7 +4,12 @@ import os
 import numpy
 import random
 import pandas
+import pickle
+import FeatureID
 from InternalModule.LogSetting import PRINT_LOG, RECORD_LOG, ROOT_LOG
+
+VER_TRAIN_SAMPLE = 100000
+VER_TEST_SAMPLE = 20000
 
 
 class VERNET:
@@ -63,10 +68,7 @@ class VERNET:
         model_file = tf.train.latest_checkpoint(os.path.join(PATH_LAYER2_MODEL))
         self.saver.restore(self.sess, model_file)
         print("Info: restore model from {}".format(os.path.join(PATH_LAYER2_MODEL, self.name)))
-        '''
-        self.saver.restore(self.sess, os.path.join(LAYER2_MODEL, self.name))
-        print("Info: restore verification model from {}".format(os.path.join(LATER2_MODEL, self.name)))
-        '''
+
 
     def get_featureID_tr(self, people_name, pic_name):
         featureID = []
@@ -207,19 +209,19 @@ class VERNET:
                                         self.real_label: test_data_label})
 
     def train(self, step, batch_size, DEBUG=False):
-        print("Info: Net {} train start({}step, {} batches)".format(self.name, step, batch_size))
-        test_data, test_data_label = self.load_batch(TRorTS="TS", batch_size=100)
-        test_data_x1 = [x[0] for x in test_data]
-        test_data_x2 = [x[1] for x in test_data]
-        if DEBUG:
-            step = 1
+        print("Info: Net {} train start({} step, {} batches size)".format(self.name, step, batch_size))
+        test_data_x1 = [x[0] for x in self.ts_data]
+        test_data_x2 = [x[1] for x in self.ts_data]
+        test_data_label = [x[2] for x in self.ts_data]
+        sample_size = len(self.tr_data)
         for i in range(step):
-            if DEBUG:
-                data, data_label = self.load_batch(TRorTS="TR", batch_size=1)
-            else:
-                data, data_label = self.load_batch(TRorTS="TR", batch_size=batch_size)
-            data_x1 = [x[0] for x in data]
-            data_x2 = [x[1] for x in data]
+            train_start = (batch_size * i) % sample_size
+            train_end = (batch_size * (i + 1)) % sample_size
+            if train_end < train_start:
+                continue
+            data_x1 = [x[0] for x in self.tr_data[train_start:train_end]]
+            data_x2 = [x[1] for x in self.tr_data[train_start:train_end]]
+            data_label = [x[2] for x in self.tr_data[train_start:train_end]]
             self.sess.run(self.train_step,
                           feed_dict={self.input_x_1: data_x1, self.input_x_2: data_x2, self.real_label: data_label})
 
@@ -227,108 +229,103 @@ class VERNET:
                 print("Step:{}".format(i))
 
                 print("\t ac:{}".format(self.sess.run(self.accuracy,
-                                                   feed_dict={self.input_x_1: test_data_x1,
-                                                              self.input_x_2: test_data_x2,
-                                                              self.real_label: test_data_label})))
+                                                      feed_dict={self.input_x_1: test_data_x1,
+                                                                 self.input_x_2: test_data_x2,
+                                                                 self.real_label: test_data_label})))
                 print("\t ce:{}".format(self.sess.run(self.cross_entropy,
-                                                   feed_dict={self.input_x_1: test_data_x1,
-                                                              self.input_x_2: test_data_x2,
-                                                              self.real_label: test_data_label})))
+                                                      feed_dict={self.input_x_1: test_data_x1,
+                                                                 self.input_x_2: test_data_x2,
+                                                                 self.real_label: test_data_label})))
                 print("\t T_ac:{}".format(self.sess.run(self.accuracy,
-                                                   feed_dict={self.input_x_1: data_x1,
-                                                              self.input_x_2: data_x2,
-                                                              self.real_label: data_label})))
+                                                        feed_dict={self.input_x_1: data_x1,
+                                                                   self.input_x_2: data_x2,
+                                                                   self.real_label: data_label})))
+            if i % 10000 == 0:
+                self.save_para()
 
-    def load_all_json(self):
-        ROOT_LOG.info("VerNet {} Load all json begin".format(self.name))
-        self.hand_dict_tr = {}
-        for index, model in enumerate(LIST_MODEL):
-            read_path = os.path.join(FEATURE_PATH, model + ".json")
-            with open(read_path, 'r') as file:
-                self.hand_dict_tr[model] = json.load(file)
-
-        self.hand_dict_ts = {}
-        for index, model in enumerate(LIST_MODEL):
-            read_path = os.path.join(FEATURE_PATH, model + "_t.json")
-            with open(read_path, 'r') as file:
-                self.hand_dict_ts[model] = json.load(file)
-        ROOT_LOG.info("VerNet {} Load all json end successfully".format(self.name))
-
-    def load_positive_sample(self, TRorTs):
-        if TRorTs == "TR":
-            people_list = PEOPLE_TRAIN2
-        elif TRorTs == "TS":
-            people_list = PEOPLE_TEST
+    # sample [identity1, pic1, identity2, pic2, flag]
+    def load_sample(self):
+        path = FILE_SAMPLE_LAYER2 + '_' + str(VER_TRAIN_SAMPLE) + '_' + str(VER_TEST_SAMPLE)
+        if os.path.exists(path):
+            with open(path, 'rb') as file:
+                data = pickle.load(file)
+            self.tr_sample, self.ts_sample = data
         else:
-            return
-        people_name = random.sample(people_list, 1)[0]
-        pic_name = random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name)), 2)
-        if TRorTs == "TR":
-            return [self.get_featureID_tr(people_name, pic_name[0]), self.get_featureID_tr(people_name, pic_name[1])]
-        if TRorTs == "TS":
-            return [self.get_featureID_ts(people_name, pic_name[0]), self.get_featureID_ts(people_name, pic_name[1])]
+            self.tr_sample = []
+            self.ts_sample = []
+            for index in range(VER_TRAIN_SAMPLE):
+                # positive
+                while (True):
+                    identity = random.sample(LIST_TRAIN2_PEOPLE, 1)[0]
+                    frame = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity]
+                    pic_list = list(frame.pic_name)
+                    if (len(pic_list) < 2):
+                        continue
+                    else:
+                        pic_name = random.sample(pic_list, 2)
+                        self.tr_sample.append([identity, pic_name[0], identity, pic_name[1], 1])
+                        break
+                # negative
+                identity = random.sample(LIST_TRAIN2_PEOPLE, 2)
+                frame1 = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity[0]]
+                pic_list1 = list(frame1.pic_name)
+                pic_name1 = random.sample(pic_list1, 1)[0]
+                frame2 = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity[1]]
+                pic_list2 = list(frame2.pic_name)
+                pic_name2 = random.sample(pic_list2, 1)[0]
+                self.tr_sample.append([identity[0], pic_name1, identity[1], pic_name2, 0])
 
-    def load_negative_sample(self, TRorTs):
-        if TRorTs == "TR":
-            people_list = PEOPLE_TRAIN2
-        elif TRorTs == "TS":
-            people_list = PEOPLE_TEST
-        else:
-            return
-        people_name = random.sample(people_list, 2)
-        pic_name = []
-        pic_name.append(random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name[0])), 1)[0])
-        pic_name.append(random.sample(os.listdir(os.path.join(PATH_DATA_ALIGNED, people_name[1])), 1)[0])
-        if TRorTs == "TR":
-            return [self.get_featureID_tr(people_name[0], pic_name[0]),
-                    self.get_featureID_tr(people_name[1], pic_name[1])]
-        if TRorTs == "TS":
-            return [self.get_featureID_ts(people_name[0], pic_name[0]),
-                    self.get_featureID_ts(people_name[1], pic_name[1])]
+            for index in range(VER_TEST_SAMPLE):
+                # positive
+                while (True):
+                    identity = random.sample(LIST_TEST_PEOPLE, 1)[0]
+                    frame = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity]
+                    pic_list = list(frame.pic_name)
+                    if (len(pic_list) < 2):
+                        continue
+                    else:
+                        pic_name = random.sample(pic_list, 2)
+                        self.ts_sample.append([identity, pic_name[0], identity, pic_name[1], 1])
+                        break
+                # negative
+                identity = random.sample(LIST_TEST_PEOPLE, 2)
+                frame1 = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity[0]]
+                pic_list1 = list(frame1.pic_name)
+                pic_name1 = random.sample(pic_list1, 1)[0]
+                frame2 = FRAME_MERGE_DATA[FRAME_MERGE_DATA.identity == identity[1]]
+                pic_list2 = list(frame2.pic_name)
+                pic_name2 = random.sample(pic_list2, 1)[0]
+                self.ts_sample.append([identity[0], pic_name1, identity[1], pic_name2, 0])
 
-    def load_sample_TR(self, sample_size):
-        self.positive_sample_TR = []
-        self.negative_sample_TR = []
-        for i in range(sample_size):
-            self.positive_sample_TR.append(self.load_positive_sample(TRorTs="TR"))
-            self.negative_sample_TR.append(self.load_negative_sample(TRorTs="TR"))
-        PRINT_LOG.info("Positive sample total {}".format(numpy.array(self.positive_sample_TR).shape))
-        PRINT_LOG.info("Negative sample total {}".format(numpy.array(self.negative_sample_TR).shape))
+            with open(path, 'wb') as file:
+                pickle.dump((self.tr_sample, self.ts_sample), file)
+        return
 
-    def load_sample_TS(self, sample_size):
-        self.positive_sample_TS = []
-        self.negative_sample_TS = []
-        for i in range(sample_size):
-            self.positive_sample_TS.append(self.load_positive_sample(TRorTs="TS"))
-            self.negative_sample_TS.append(self.load_negative_sample(TRorTs="TS"))
-        PRINT_LOG.info("Positive sample total {}".format(numpy.array(self.positive_sample_TS).shape))
-        PRINT_LOG.info("Negative sample total {}".format(numpy.array(self.negative_sample_TS).shape))
-
-    def load_batch(self, TRorTS, batch_size=50):
-        positive_tag = [1.0, 0.0]
-        negative_tag = [0.0, 1.0]
-        if TRorTS == "TR":
-            re_data = random.sample(self.positive_sample_TR, batch_size) + random.sample(self.negative_sample_TR,
-                                                                                         batch_size)
-        elif TRorTS == "TS":
-            re_data = random.sample(self.positive_sample_TS, batch_size) + random.sample(self.negative_sample_TS,
-                                                                                         batch_size)
-        else:
-            return
-        re_tag = []
-        for i in range(batch_size):
-            re_tag.append(positive_tag)
-        for i in range(batch_size):
-            re_tag.append(negative_tag)
-        return re_data, re_tag
+    def load_featureID(self):
+        self.tr_data = []
+        self.ts_data = []
+        random.shuffle(self.tr_sample)
+        random.shuffle(self.ts_sample)
+        F_tr = FeatureID.FeatureID(False)
+        for line in self.tr_sample:
+            featureID1 = F_tr.GetAPicWholeID(line[0], line[1])
+            featureID2 = F_tr.GetAPicWholeID(line[2], line[3])
+            tag = numpy.zeros([2])
+            tag[line[4]] = 1.0
+            self.tr_data.append([featureID1, featureID2, tag])
+        F_ts = FeatureID.FeatureID(True)
+        for line in self.ts_sample:
+            featureID1 = F_ts.GetAPicWholeID(line[0], line[1])
+            featureID2 = F_ts.GetAPicWholeID(line[2], line[3])
+            tag = numpy.zeros([2])
+            tag[line[4]] = 1.0
+            self.ts_data.append([featureID1, featureID2, tag])
 
 
 if __name__ == "__main__":
     V = VERNET(model_feature_size=TRAIN_PARA_FEATURE_ID_LEN, name="Verification")
+    V.load_sample()
+    V.load_featureID()
     V.build_model()
     V.initial_para()
-    V.load_all_json()
-    V.load_sample_TR(100000)
-    V.load_sample_TS(20000)
-    V.train(step=30000, batch_size=100, DEBUG=False)
-    V.save_para()
+    V.train(step=300000, batch_size=100, DEBUG=False)

@@ -227,73 +227,12 @@ def WriteAllBatches():
     # WriteTrain2Batches()
 
 
-class SepBatch:
-    def __init__(self, pic_name):
-        self.pic_name = pic_name
-        pass
 
-    def GetLandmark(self):
-        landmark_data = FRAME_TRAIN1_INFO[FRAME_TRAIN1_INFO.pic_name == self.pic_name]
-        assert len(landmark_data) == 1
-        self.identity = int(landmark_data.identity)
-        self.img = ReadPicture(os.path.join(PATH_DATA_ALIGNED, self.pic_name), color=PARA.COLOR, to_array=False)
-        print(self.img)
-        self.left_eye = [int(landmark_data.lefteye_x), int(landmark_data.lefteye_y)]
-        self.right_eye = [int(landmark_data.righteye_x), int(landmark_data.righteye_y)]
-        self.left_mouth = [int(landmark_data.leftmouth_x), int(landmark_data.leftmouth_y)]
-        self.right_mouth = [int(landmark_data.rightmouth_x), int(landmark_data.rightmouth_y)]
-        self.nose = [int(landmark_data.nose_x), int(landmark_data.nose_y)]
-        # print(self.left_eye)
-        # print(self.right_eye)
-        # print(self.left_mouth)
-        # print(self.right_mouth)
-        # print(self.nose)
 
-    def GetBatch(self):
-        self.size = self.img.shape
-        self.batches = []
-        self.batches.append(self.img)
-        # shearing picture  [y1:y2,x1:x2]  left top: 1 right bottom: 2
-        self.batches.append(
-            self.ShearPicture(self.left_eye[0], self.left_eye[1], self.right_eye[0], self.right_mouth[1], 20, 20))
-        # self.batches.append(
-        #     self.ShearPicture(self.left_eye[0], self.left_eye[1], self.right_eye[0], self.right_mouth[1], 20, 20))
-        # self.batches.append(
-        #     self.ShearPicture(self.left_eye[0], self.left_eye[1], self.right_eye[0], self.right_mouth[1], 20, 20))
-        # self.batches.append(
-        #     self.ShearPicture(self.left_eye[0], self.left_eye[1], self.right_eye[0], self.right_mouth[1], 20, 20))
-        # self.batches.append()
 
-    def ShearPicture(self, x1, y1, x2, y2, x_add, y_add):
-        x1 = max(0, x1 - x_add)
-        y1 = max(0, y1 - y_add)
-        x2 = min(self.size[0], x2 + x_add)
-        y2 = min(self.size[1], y2 + x_add)
-        return self.img[y1:y2, x1:x2]
 
-    def ShowBatch(self):
-        fig = plt.figure()
-        total = len(self.batches)
-        width = 2
-        height = total / width + 1
-        for index, img in enumerate(self.batches):
-            print(img.shape)
-            img_r = img[:, :, 0]
-            img_g = img[:, :, 1]
-            img_b = img[:, :, 2]
-            img = cv2.merge([img_b, img_g, img_r])
-            ax = fig.add_subplot(width, height, index + 1)
-            ax.imshow(img)
-        fig.show()
-        fig.waitforbuttonpress()
-
-    def get_batch(self):
-        return self.batches
 
 
 if __name__ == "__main__":
-    for index, pic_info in FRAME_TRAIN1_INFO.iterrows():
-        s = SepBatch()
-        s.GetLandmark(pic_info.pic_name)
-        s.GetBatch()
-        s.ShowBatch()
+    pass
+

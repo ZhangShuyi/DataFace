@@ -28,6 +28,8 @@ def getPictureFromInternet(txt_path, save_path, start_line=0):
     num_dict = {}
     while True:
         line = file_object.readline()
+        if line is None:
+            break
         index += 1
         if index < start_line:
             continue
